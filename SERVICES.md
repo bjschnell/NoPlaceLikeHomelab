@@ -16,11 +16,14 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | NGINX *(bare metal)* | 80, 443 | Reverse proxy — terminates external traffic, routes `*.portalgun.dev` |
 | Authelia | 9091 | SSO / forward-auth layer in front of NGINX |
 | Tailscale | — | WireGuard overlay daemon (uses UDP 41641 for direct connections) |
-| Prometheus | 9090 | Metrics collection — scrapes Allfather and Muninn |
+| Prometheus | 9090 | Metrics collection — scrapes all three nodes |
+| Grafana | 3000 | Metrics dashboards |
 | Uptime Kuma | 3001 | Service availability / uptime monitoring |
 | Portainer | 9000, 9443 | Container management (server; agents run on the other nodes) |
 | Dockge | 5001 | Docker Compose stack management UI |
 | Restic | — | Automated backups (CLI, scheduled) → [ADR 006](./decisions/006-distributed-restic-append-only.md) · [`homelab-backup/`](./homelab-backup/) |
+| node_exporter | 9100 | Host-level metrics |
+| cAdvisor | 8080 | Per-container resource metrics |
 
 ## Allfather — Primary Application Host (Dell OptiPlex 7080, i5-10500T)
 
@@ -48,6 +51,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | Prowlarr | 9696 | Indexer aggregator for Sonarr/Radarr |
 | FlareSolverr | 8191 | Cloudflare challenge solver for indexers |
 | Nextcloud | 80, 443 | File sync and cloud storage |
+| Samba *(bare metal)* | 139, 445 | LAN file sharing (SMB) |
 | Portainer Agent | 9001 | Exposes this node to the Portainer server on Heimdall |
 | Restic | — | Backup target (primary, append-only via rest-server) → [ADR 006](./decisions/006-distributed-restic-append-only.md) · [`homelab-backup/`](./homelab-backup/) |
 | Dockge | 5001 | Docker Compose stack management UI |

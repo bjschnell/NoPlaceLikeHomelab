@@ -19,7 +19,7 @@ Internet
             │
     ┌────────────────┐
     │    HEIMDALL    │  ← Network edge. Always on. If this goes down, nothing else matters.
-    │     (GE60)     │     AdGuard · NGINX (bare metal) · Authelia · Prometheus · Uptime Kuma · Portainer
+    │     (GE60)     │     AdGuard · NGINX (bare metal) · Authelia · Prometheus · Grafana · Uptime Kuma · Portainer
     └───────┬────────┘
             │ authenticated reverse proxy
     ┌───────▼────────┐        ┌───────────────────────┐
@@ -28,9 +28,9 @@ Internet
     │                │        │                        │
     │ Home Assistant │        │ Jellyfin · Immich      │
     │ Vaultwarden    │        │ Sonarr · Radarr        │
-    │ PingPong       │        │ Prowlarr               │
-    │ 2009Scape      │        │ FlareSolverr           │
-    │ PostFix        │        │ Nextcloud              │
+    │ PingPong       │        │ Prowlarr · FlareSolverr│
+    │ 2009Scape      │        │ Nextcloud              │
+    │ PostFix        │        │ Samba (bare metal)     │
     │ Homepage       │        │ Portainer Agent        │
     └────────────────┘        └───────────────────────┘
 ```
@@ -59,8 +59,8 @@ graph TB
         direction TB
         NGINX["NGINX (bare metal)<br/>reverse proxy"] --> Authelia["Authelia · SSO"]
         AdGuard["AdGuard Home<br/>DNS filtering"]
-        Obs["Monitoring<br/>Prometheus · Uptime Kuma"]
-        Mgmt_H["Portainer · Dockge · Restic"]
+        Obs["Monitoring<br/>Prometheus · Grafana · Uptime Kuma"]
+        Mgmt_H["Portainer · Dockge · Restic<br/>node_exporter · cAdvisor"]
     end
 
     subgraph Allfather["ALLFATHER · Dell OptiPlex 7080 (i5-10500T) · Primary App Host"]
@@ -72,7 +72,7 @@ graph TB
     subgraph Muninn["MUNINN (host: Archy) · Intel i7-3930K · NAS / Media"]
         direction LR
         M_media["Jellyfin · Immich<br/>Sonarr · Radarr · Prowlarr<br/>FlareSolverr"]
-        M_store["Nextcloud · Portainer Agent<br/>Restic · Dockge<br/>node_exporter · cAdvisor"]
+        M_store["Nextcloud · Samba (bare metal)<br/>Portainer Agent · Restic · Dockge<br/>node_exporter · cAdvisor"]
     end
 
     Authelia -- authenticated proxy --> Allfather
@@ -112,11 +112,13 @@ The most critical node. Handles all DNS, routing, authentication, and observabil
 | NGINX *(bare metal)* | Reverse proxy — routes `*.portalgun.dev` subdomains |
 | Authelia | SSO authentication layer in front of NGINX |
 | Tailscale | Overlay network for secure remote access |
-| Prometheus | Metrics collection (scrapes Allfather + Muninn) |
+| Prometheus | Metrics collection (scrapes all three nodes) |
+| Grafana | Metrics dashboards |
 | Uptime Kuma | Service availability monitoring |
 | Portainer | Container management (server; agents on the other nodes) |
 | Dockge | Docker Compose management UI |
 | Restic | Automated backups |
+| node_exporter + cAdvisor | Host and container metrics |
 
 **Design decision:** Monitoring lives on the edge node intentionally. If Allfather or Muninn goes down, that's exactly when you need visibility. Monitoring on the failing node is useless. → [ADR 001](./decisions/001-monitoring-on-edge-node.md)
 
@@ -154,6 +156,7 @@ The oldest machine in the stack, repurposed as a dedicated storage and media nod
 | Prowlarr | Indexer aggregator |
 | FlareSolverr | Cloudflare bypass for indexers |
 | Nextcloud | Self-hosted file sync and cloud storage |
+| Samba *(bare metal)* | LAN file sharing (SMB) |
 | Portainer Agent | Exposes this node to Portainer on Heimdall |
 | Restic | Automated backups |
 | Dockge | Docker Compose management UI |
@@ -175,7 +178,7 @@ The oldest machine in the stack, repurposed as a dedicated storage and media nod
 
 ## Observability Stack
 
-Allfather and Muninn each run `node_exporter` (host metrics) and `cAdvisor` (container metrics). Prometheus on Heimdall scrapes both nodes centrally, and Uptime Kuma monitors availability of each service endpoint.
+All three nodes run `node_exporter` (host metrics) and `cAdvisor` (container metrics). Prometheus on Heimdall scrapes them centrally, Grafana provides dashboards, and Uptime Kuma monitors availability of each service endpoint.
 
 Running collection on the edge node means monitoring survives compute-node failures — the most useful property a monitoring stack can have.
 
