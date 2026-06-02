@@ -2,6 +2,8 @@
 
 A three-node home infrastructure built around clear separation of responsibilities — network edge, application hosting, and media/storage are intentionally isolated so that any single node can go down without taking the rest of the stack with it.
 
+> **Snapshot of current state.** This documents what's actually deployed today, not a target architecture — it's updated as the stack changes. Some services are mid-migration between nodes; where that matters it's noted.
+
 > **Companion docs:** [`SERVICES.md`](./SERVICES.md) is a flat reference of every service and where it runs. [`decisions/`](./decisions) holds the Architecture Decision Records — the *why* behind the choices below.
 
 ---
@@ -13,24 +15,24 @@ Internet
     │
     ├── Cloudflare (DNS + DDoS)
     │
-    └── Tailscale (overlay network — remote access)
+    └── Tailscale (WireGuard overlay — remote access)
             │
-    ┌───────▼────────┐
-    │   HEIMDALL     │  ← Network edge. Always on. If this goes down, nothing else matters.
-    │   (GE60)       │     AdGuard · NGINX · Authelia · Grafana · Prometheus · Uptime Kuma
+    ┌────────────────┐
+    │    HEIMDALL    │  ← Network edge. Always on. If this goes down, nothing else matters.
+    │     (GE60)     │     AdGuard · NGINX (bare metal) · Authelia · Prometheus · Uptime Kuma · Portainer
     └───────┬────────┘
-            │ reverse proxy (authenticated)
-    ┌───────▼────────┐        ┌──────────────────┐
-    │   ALLFATHER    │        │     MUNINN        │
-    │  (Dell 7080)   │        │    (i7-3930K)     │
-    │                │        │                   │
-    │ Home Assistant │        │ Jellyfin · Immich │
-    │ Vaultwarden    │        │ Sonarr · Radarr   │
-    │ Nextcloud      │        │ Prowlarr          │
-    │ PostFix        │        │ Nextcloud (media) │
-    │ PingPong       │        │ Samba             │
-    │ Homepage       │        │ Moonlight/Sunshine│
-    └────────────────┘        └──────────────────┘
+            │ authenticated reverse proxy
+    ┌───────▼────────┐        ┌───────────────────────┐
+    │    ALLFATHER   │        │   MUNINN (host: Archy) │
+    │   (Dell 7080)  │        │      (i7-3930K)        │
+    │                │        │                        │
+    │ Home Assistant │        │ Jellyfin · Immich      │
+    │ Vaultwarden    │        │ Sonarr · Radarr        │
+    │ PingPong       │        │ Prowlarr               │
+    │ 2009Scape      │        │ FlareSolverr           │
+    │ PostFix        │        │ Nextcloud              │
+    │ Homepage       │        │ Portainer Agent        │
+    └────────────────┘        └───────────────────────┘
 ```
 
 ![Homelab architecture diagram](./assets/architecture.png)
@@ -42,8 +44,8 @@ Internet
 graph TB
     subgraph Clients["Clients"]
         direction LR
-        Ragnarok["Ragnarok<br/>CachyOS"]
-        Odin["Odin<br/>Win11"]
+        Ragnarok["Ragnarok · CachyOS<br/>Sunshine host (bare metal)"]
+        Odin["Odin · Win11"]
         SteamDeck["Steam Deck"]
         iPhone["iPhone"]
     end
@@ -55,21 +57,22 @@ graph TB
 
     subgraph Heimdall["HEIMDALL · MSI GE60 · Edge / Network / Monitoring · 24/7"]
         direction TB
-        NGINX["NGINX<br/>reverse proxy"] --> Authelia["Authelia · SSO"]
+        NGINX["NGINX (bare metal)<br/>reverse proxy"] --> Authelia["Authelia · SSO"]
         AdGuard["AdGuard Home<br/>DNS filtering"]
-        Obs["Monitoring stack<br/>Prometheus · Grafana<br/>Uptime Kuma · Dockge"]
+        Obs["Monitoring<br/>Prometheus · Uptime Kuma"]
+        Mgmt_H["Portainer · Dockge · Restic"]
     end
 
-    subgraph Allfather["ALLFATHER · Dell OptiPlex 7080 · Primary App Host"]
+    subgraph Allfather["ALLFATHER · Dell OptiPlex 7080 (i5-10500T) · Primary App Host"]
         direction LR
-        A_apps["Homepage · Home Assistant<br/>Vaultwarden · Nextcloud<br/>PostFix · PingPong"]
-        A_mgmt["Portainer · Restic · Dockge<br/>node_exporter · cAdvisor"]
+        A_apps["Homepage · Vaultwarden · PingPong<br/>2009Scape · Home Assistant (VM)"]
+        A_mgmt["PostFix · Restic · Dockge<br/>node_exporter · cAdvisor"]
     end
 
-    subgraph Muninn["MUNINN · Intel i7-3930K · NAS / Media"]
+    subgraph Muninn["MUNINN (host: Archy) · Intel i7-3930K · NAS / Media"]
         direction LR
         M_media["Jellyfin · Immich<br/>Sonarr · Radarr · Prowlarr<br/>FlareSolverr"]
-        M_store["Nextcloud (media) · Samba<br/>Sunshine (bare metal)<br/>node_exporter · cAdvisor"]
+        M_store["Nextcloud · Portainer Agent<br/>Restic · Dockge<br/>node_exporter · cAdvisor"]
     end
 
     Authelia -- authenticated proxy --> Allfather
@@ -79,8 +82,7 @@ graph TB
     Tailscale -. mesh .-> Muninn
     Obs -. scrapes metrics .-> Allfather
     Obs -. scrapes metrics .-> Muninn
-    A_mgmt -. Restic backup .-> Muninn
-    SteamDeck -. Moonlight stream .-> M_store
+    SteamDeck -. Moonlight stream .-> Ragnarok
 
     classDef edge fill:#1e3a5f,stroke:#4a90d9,color:#fff;
     classDef app fill:#1f4d2e,stroke:#52a373,color:#fff;
@@ -107,42 +109,42 @@ The most critical node. Handles all DNS, routing, authentication, and observabil
 | Service | Role |
 |---|---|
 | AdGuard Home | Network-wide DNS ad/tracker blocking |
-| NGINX | Reverse proxy — routes `*.portalgun.dev` subdomains |
+| NGINX *(bare metal)* | Reverse proxy — routes `*.portalgun.dev` subdomains |
 | Authelia | SSO authentication layer in front of NGINX |
 | Tailscale | Overlay network for secure remote access |
-| Grafana | Metrics dashboards |
-| Prometheus | Metrics collection (scrapes all nodes) |
+| Prometheus | Metrics collection (scrapes Allfather + Muninn) |
 | Uptime Kuma | Service availability monitoring |
+| Portainer | Container management (server; agents on the other nodes) |
 | Dockge | Docker Compose management UI |
-| cAdvisor + node_exporter | Container and host metrics |
+| Restic | Automated backups |
 
 **Design decision:** Monitoring lives on the edge node intentionally. If Allfather or Muninn goes down, that's exactly when you need visibility. Monitoring on the failing node is useless. → [ADR 001](./decisions/001-monitoring-on-edge-node.md)
 
 ---
 
 ### Allfather — Primary Application Host
-*Dell OptiPlex 7080 · Primary compute node*
+*Dell OptiPlex 7080 (i5-10500T, 32GB) · Primary compute node*
 
-Runs the services that matter most day-to-day. Sized to handle the workloads that actually need CPU — Nextcloud, Home Assistant automations, and application logic.
+Runs the day-to-day application services. This node is the intended landing spot for CPU-bound services as they migrate off the older Muninn hardware over time.
 
 | Service | Role |
 |---|---|
 | Homepage | Unified homelab dashboard |
-| Home Assistant | Home automation |
+| Home Assistant | Home automation (runs in a VirtualBox VM) |
 | Vaultwarden | Self-hosted Bitwarden password manager |
-| Nextcloud | Self-hosted file sync and cloud storage |
-| PostFix | Mail relay |
 | PingPong | Machine-to-machine messaging (personal project) |
-| Portainer | Container management |
+| 2009Scape | Self-hosted 2009-era RuneScape game server |
+| PostFix | Mail relay |
 | Restic | Automated backups |
 | Dockge | Docker Compose management UI |
+| node_exporter + cAdvisor | Host and container metrics (scraped by Prometheus on Heimdall) |
 
 ---
 
 ### Muninn — NAS & Media
-*Intel i7-3930K · Storage and media workloads*
+*Intel i7-3930K · Storage and media workloads · hostname: `archy`*
 
-The oldest machine in the stack, repurposed as a dedicated storage and media node. The 3930K's age doesn't matter for this role — media serving and file storage are I/O-bound, not CPU-bound.
+The oldest machine in the stack, repurposed as a dedicated storage and media node. The 3930K's age doesn't matter for this role — media serving and file storage are I/O-bound, not CPU-bound. (Documented as **Muninn** to fit the node naming scheme; the live hostname is still `archy`.)
 
 | Service | Role |
 |---|---|
@@ -151,19 +153,19 @@ The oldest machine in the stack, repurposed as a dedicated storage and media nod
 | Sonarr / Radarr | TV and movie library management |
 | Prowlarr | Indexer aggregator |
 | FlareSolverr | Cloudflare bypass for indexers |
-| Samba | LAN file sharing |
-| Nextcloud (media) | Media library accessible via Nextcloud |
-| Moonlight / Sunshine | GPU game streaming (bare metal) |
-
-**Design decision:** Moonlight/Sunshine runs bare metal rather than in Docker. GPU passthrough adds complexity with no real benefit in this context — direct hardware access is simpler and more performant for game streaming. → [ADR 003](./decisions/003-moonlight-bare-metal.md)
+| Nextcloud | Self-hosted file sync and cloud storage |
+| Portainer Agent | Exposes this node to Portainer on Heimdall |
+| Restic | Automated backups |
+| Dockge | Docker Compose management UI |
+| node_exporter + cAdvisor | Host and container metrics (scraped by Prometheus on Heimdall) |
 
 ---
 
 ## Network & Security
 
-**External traffic:** Cloudflare sits in front of the public domain. All traffic terminates at NGINX on Heimdall. Authelia enforces authentication before any service is reachable. → [ADR 002](./decisions/002-authelia-at-boundary.md)
+**External traffic:** Cloudflare sits in front of the public domain. All traffic terminates at NGINX (bare metal) on Heimdall. Authelia enforces authentication before any service is reachable. → [ADR 002](./decisions/002-authelia-at-boundary.md)
 
-**Remote access:** Tailscale provides a zero-config WireGuard overlay network. Internal services are reachable over Tailscale without any port forwarding on the router.
+**Remote access:** Tailscale provides a zero-config WireGuard overlay network across all three nodes. Internal services are reachable over Tailscale without any port forwarding on the router.
 
 **Internal traffic:** AdGuard handles DNS for the local network and resolves internal subdomains locally (no hairpin NAT). All inter-node communication stays on the LAN.
 
@@ -173,9 +175,9 @@ The oldest machine in the stack, repurposed as a dedicated storage and media nod
 
 ## Observability Stack
 
-All three nodes export metrics to Prometheus running on Heimdall via `node_exporter` (host metrics) and `cAdvisor` (container metrics). Grafana dashboards provide a unified view across the stack. Uptime Kuma monitors availability of each service endpoint.
+Allfather and Muninn each run `node_exporter` (host metrics) and `cAdvisor` (container metrics). Prometheus on Heimdall scrapes both nodes centrally, and Uptime Kuma monitors availability of each service endpoint.
 
-This means monitoring survives compute node failures — the most useful property a monitoring stack can have.
+Running collection on the edge node means monitoring survives compute-node failures — the most useful property a monitoring stack can have.
 
 ---
 
@@ -189,7 +191,7 @@ This means monitoring survives compute node failures — the most useful propert
 
 **Boring infrastructure.** Docker Compose over Kubernetes. Tailscale over self-managed WireGuard. The goal is services that run quietly, not an infrastructure playground. → [ADR 005](./decisions/005-docker-compose-over-kubernetes.md)
 
-**3-2-1 backup strategy.** Restic on Allfather handles automated backups. Two local copies (Allfather + Muninn) and one offsite.
+**Backups everywhere, working toward 3-2-1.** Restic runs on all three nodes for automated backups. Two local copies exist (across nodes); an offsite copy is still being built out to complete a full 3-2-1 strategy.
 
 ---
 
@@ -225,8 +227,8 @@ Config files are intentionally excluded — they contain environment-specific va
 | Node | Machine | CPU | RAM | Role |
 |---|---|---|---|---|
 | Heimdall | MSI GE60 (2OE) | Intel Core i7-4700MQ (4th gen, Haswell) | 8GB | Edge / Monitoring |
-| Allfather | Dell OptiPlex 7080 | Intel Core i7-10700 (10th gen, Comet Lake) | 32GB | Applications |
-| Muninn | Custom | Intel i7-3930K | 32GB | NAS / Media |
+| Allfather | Dell OptiPlex 7080 | Intel Core i5-10500T (10th gen, Comet Lake, 35W) | 32GB | Applications |
+| Muninn (`archy`) | Custom | Intel i7-3930K | 32GB | NAS / Media |
 
 ---
 
@@ -234,7 +236,7 @@ Config files are intentionally excluded — they contain environment-specific va
 
 | Device | OS | Notes |
 |---|---|---|
-| Ragnarok (desktop) | CachyOS / Hyprland | AMD Ryzen 9 9950X3D · RTX 5080 · daily driver |
+| Ragnarok (desktop) | CachyOS / Hyprland | AMD Ryzen 9 9950X3D · RTX 5080 · daily driver · **Sunshine game-stream host (bare metal)** |
 | Odin (laptop) | Windows 11 | Gaming / Windows workloads |
 | Steam Deck | SteamOS | Portable gaming · Moonlight client |
 | iPhone | iOS | Mobile · Tailscale client |
