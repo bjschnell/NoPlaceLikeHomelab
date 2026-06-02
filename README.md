@@ -191,7 +191,7 @@ Running collection on the edge node means monitoring survives compute-node failu
 
 **Boring infrastructure.** Docker Compose over Kubernetes. Tailscale over self-managed WireGuard. The goal is services that run quietly, not an infrastructure playground. → [ADR 005](./decisions/005-docker-compose-over-kubernetes.md)
 
-**Backups everywhere, working toward 3-2-1.** Restic runs on all three nodes for automated backups. Two local copies exist (across nodes); an offsite copy is still being built out to complete a full 3-2-1 strategy.
+**Backups everywhere, working toward 3-2-1.** Restic runs on all three nodes with per-host encryption keys and append-only targets — a compromised source host can write new snapshots but cannot destroy history. Tiered cadence (hot every 6h, critical nightly, full weekly) matches RPO to data criticality, and critical+full replicate to a peer host as well as Archy. Offsite is the remaining gap. → [ADR 006](./decisions/006-distributed-restic-append-only.md) · scripts and runbooks in [`homelab-backup/`](./homelab-backup/)
 
 ---
 
@@ -205,13 +205,16 @@ Running collection on the edge node means monitoring survives compute-node failu
 ├── assets/
 │   ├── architecture.png   # Rendered architecture diagram
 │   └── diagram.mmd        # Mermaid source for the diagram
-└── decisions/         # Architecture Decision Records (ADRs)
-    ├── README.md
-    ├── 001-monitoring-on-edge-node.md
-    ├── 002-authelia-at-boundary.md
-    ├── 003-moonlight-bare-metal.md
-    ├── 004-no-direct-port-forwarding.md
-    └── 005-docker-compose-over-kubernetes.md
+├── decisions/         # Architecture Decision Records (ADRs)
+│   ├── README.md
+│   ├── 001-monitoring-on-edge-node.md
+│   ├── 002-authelia-at-boundary.md
+│   ├── 003-moonlight-bare-metal.md
+│   ├── 004-no-direct-port-forwarding.md
+│   ├── 005-docker-compose-over-kubernetes.md
+│   └── 006-distributed-restic-append-only.md
+├── homelab-backup/    # Distributed restic backup: scripts, systemd units, restore + rotation runbooks
+└── sunshine/          # Sunshine bare-metal scripts (Hyprland virtual display for Moonlight streaming)
 ```
 
 ---

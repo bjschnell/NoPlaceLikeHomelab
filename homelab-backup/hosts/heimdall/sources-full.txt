@@ -1,0 +1,28 @@
+# Full tier sources for heimdall (weekly).
+# Superset of critical.
+
+# --- everything from critical ---
+/var/backups/homelab/full/authelia.sqlite3
+/var/backups/homelab/full/uptime-kuma.sqlite3
+/var/backups/homelab/full/grafana.db
+/opt/stacks
+/apps/adguardhome/conf
+/apps/adguardhome/work
+/etc/nginx
+/etc/letsencrypt
+/root/.ssh
+/home/xdx/.ssh
+/root/.restic
+
+# --- full-tier additions ---
+
+# All system config not already covered
+/etc
+
+# Crontabs / systemd unit overrides
+/var/spool/cron
+/etc/systemd/system
+
+# NOTE: Prometheus TSDB and Grafana provisioned data are intentionally
+# NOT included.  The TSDB regenerates from scrapes; Grafana's SQLite
+# (already dumped above) holds dashboards, users, and config.

@@ -1,0 +1,3 @@
+# Hot tier sources for allfather (every 6h).
+# Vaultwarden online dump only.
+/var/backups/homelab/hot/vaultwarden.sqlite3

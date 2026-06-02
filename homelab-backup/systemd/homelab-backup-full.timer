@@ -1,0 +1,14 @@
+[Unit]
+Description=Homelab backup (full tier) timer -- weekly Sunday 04:00
+Documentation=file:///opt/homelab-backup/docs/ARCHITECTURE.md
+
+[Timer]
+# Sunday 04:00 -- one hour after the critical tier window closes.
+OnCalendar=Sun *-*-* 04:00:00
+Persistent=true
+RandomizedDelaySec=30min
+
+Unit=homelab-backup-full.service
+
+[Install]
+WantedBy=timers.target

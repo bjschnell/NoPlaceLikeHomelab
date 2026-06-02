@@ -1,0 +1,15 @@
+[Unit]
+Description=Homelab backup (critical tier) timer -- nightly at 03:00
+Documentation=file:///opt/homelab-backup/docs/ARCHITECTURE.md
+
+[Timer]
+# Every day at 03:00 local time.  Spread randomly to avoid both source
+# hosts hitting archy at the same instant.
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+RandomizedDelaySec=15min
+
+Unit=homelab-backup-critical.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,23 @@
+# Full tier sources for allfather (weekly).
+# Superset of critical.
+
+# --- everything from critical ---
+/var/backups/homelab/full/vaultwarden.sqlite3
+/opt/stacks
+/opt/dockge/data
+/root/.ssh
+/home/xdx/.ssh
+/root/.restic
+
+# --- full-tier additions ---
+
+# All system config that isn't already covered above
+/etc
+
+# Crontabs and systemd unit overrides
+/var/spool/cron
+/etc/systemd/system
+
+# NOTE: HA VM is intentionally not backed up here.  HA writes its own
+# .tar self-backups via the supervisor and ships them to archy via
+# Samba; that flow is independent of this pipeline.

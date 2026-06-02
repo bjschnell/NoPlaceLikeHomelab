@@ -1,0 +1,22 @@
+# Critical tier sources for allfather (nightly).
+
+# Pre-backup hook outputs
+/var/backups/homelab/critical/vaultwarden.sqlite3
+
+# All Dockge-managed compose stacks (homepage, vaultwarden, pingpong,
+# cadvisor, node-exporter, dockge itself).  Includes their bind-mounted
+# config dirs for services that have them.
+/opt/stacks
+
+# Dockge's own data dir -- contains the Dockge UI's stored state,
+# including any compose definitions Dockge manages but doesn't write
+# to disk under /opt/stacks (e.g. AdGuard, which we observed running
+# without a compose file in /opt/stacks).
+/opt/dockge/data
+
+# SSH keys -- needed to re-establish trust if allfather is rebuilt
+/root/.ssh
+/home/xdx/.ssh
+
+# Restic config (password files, ssh keys used by backup itself)
+/root/.restic

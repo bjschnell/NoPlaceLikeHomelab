@@ -1,0 +1,30 @@
+# Critical tier sources for heimdall (nightly).
+
+# DB dumps from pre-backup hooks
+/var/backups/homelab/critical/authelia.sqlite3
+/var/backups/homelab/critical/uptime-kuma.sqlite3
+/var/backups/homelab/critical/grafana.db
+
+# All Dockge-managed compose stacks: authelia, portainer, prometheus,
+# uptimekuma.  Includes their bind-mounted config/data dirs (config dirs
+# only -- TSDB and other large named-volume data is excluded by exclude
+# rules and the named-volume mount mechanism).
+/opt/stacks
+
+# AdGuard Home -- bind-mount source paths for the docker stack.
+# (The compose itself is managed by Dockge; see /opt/dockge/data on
+# allfather, which Dockge writes its state to.)
+# Excludes (querylog, stats) are handled in excludes.txt.
+/apps/adguardhome/conf
+/apps/adguardhome/work
+
+# Edge proxy + certs (nginx is native on heimdall)
+/etc/nginx
+/etc/letsencrypt
+
+# SSH keys
+/root/.ssh
+/home/xdx/.ssh
+
+# Restic config
+/root/.restic

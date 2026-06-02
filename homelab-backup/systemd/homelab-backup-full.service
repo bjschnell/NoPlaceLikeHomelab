@@ -1,0 +1,29 @@
+[Unit]
+Description=Homelab backup (full tier, weekly)
+Documentation=file:///opt/homelab-backup/docs/ARCHITECTURE.md
+Wants=network-online.target
+After=network-online.target docker.service
+
+ConditionACPower=true
+
+# Don't run while the critical-tier job is mid-flight.  Either tier can
+# run independently the rest of the time.
+Conflicts=homelab-backup-critical.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/homelab-backup/hosts/%H/backup-full.sh
+TimeoutStartSec=8h
+
+User=root
+Nice=19
+IOSchedulingClass=idle
+ProtectSystem=full
+ProtectHome=read-only
+NoNewPrivileges=true
+PrivateTmp=true
+
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

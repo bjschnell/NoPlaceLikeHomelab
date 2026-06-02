@@ -20,7 +20,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | Uptime Kuma | 3001 | Service availability / uptime monitoring |
 | Portainer | 9000, 9443 | Container management (server; agents run on the other nodes) |
 | Dockge | 5001 | Docker Compose stack management UI |
-| Restic | — | Automated backups (CLI, scheduled) |
+| Restic | — | Automated backups (CLI, scheduled) → [ADR 006](./decisions/006-distributed-restic-append-only.md) · [`homelab-backup/`](./homelab-backup/) |
 
 ## Allfather — Primary Application Host (Dell OptiPlex 7080, i5-10500T)
 
@@ -32,7 +32,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | PingPong | — | Machine-to-machine messaging (personal project) |
 | 2009Scape | 43594 | Self-hosted 2009-era RuneScape game server |
 | PostFix | 25, 587 | Mail relay (SMTP / submission) |
-| Restic | — | Automated backups (CLI, scheduled) |
+| Restic | — | Automated backups (CLI, scheduled) → [ADR 006](./decisions/006-distributed-restic-append-only.md) · [`homelab-backup/`](./homelab-backup/) |
 | Dockge | 5001 | Docker Compose stack management UI |
 | node_exporter | 9100 | Host-level metrics |
 | cAdvisor | 8080 | Per-container resource metrics |
@@ -49,7 +49,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | FlareSolverr | 8191 | Cloudflare challenge solver for indexers |
 | Nextcloud | 80, 443 | File sync and cloud storage |
 | Portainer Agent | 9001 | Exposes this node to the Portainer server on Heimdall |
-| Restic | — | Automated backups (CLI, scheduled) |
+| Restic | — | Backup target (primary, append-only via rest-server) → [ADR 006](./decisions/006-distributed-restic-append-only.md) · [`homelab-backup/`](./homelab-backup/) |
 | Dockge | 5001 | Docker Compose stack management UI |
 | node_exporter | 9100 | Host-level metrics |
 | cAdvisor | 8080 | Per-container resource metrics |
@@ -60,7 +60,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 
 | Service | Host | Purpose |
 |---|---|---|
-| Sunshine *(bare metal)* | Ragnarok (gaming desktop) | GPU game-stream host; Moonlight clients (Steam Deck, etc.) connect over LAN / Tailscale → [ADR 003](./decisions/003-moonlight-bare-metal.md) |
+| Sunshine *(bare metal)* | Ragnarok (gaming desktop) | GPU game-stream host; Moonlight clients (Steam Deck, etc.) connect over LAN / Tailscale → [ADR 003](./decisions/003-moonlight-bare-metal.md) · Hyprland virtual-display hooks in [`sunshine/`](./sunshine/) |
 
 ---
 

@@ -1,0 +1,14 @@
+# Exclude patterns for allfather backups.
+
+# Common ephemera
+**/*.log
+**/*.pid
+**/*.sock
+**/*.swp
+**/.cache
+**/cache/
+**/Cache/
+**/tmp/
+
+# Don't recurse into our own dump staging
+/var/backups/homelab/staging/

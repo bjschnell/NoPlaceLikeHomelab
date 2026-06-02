@@ -1,0 +1,24 @@
+# Exclude patterns for heimdall backups.
+
+# Common ephemera
+**/*.log
+**/*.pid
+**/*.sock
+**/*.swp
+**/.cache
+**/cache/
+**/Cache/
+**/tmp/
+
+# AdGuard query log + stats: enormous, regenerates, low restore value.
+/apps/adguardhome/work/data/querylog.json
+/apps/adguardhome/work/data/querylog.json.1
+/apps/adguardhome/work/data/stats.db
+/apps/adguardhome/work/data/sessions.db
+
+# Let's Encrypt's own backup-of-itself
+/etc/letsencrypt/accounts.bak
+/etc/letsencrypt/archive.bak
+
+# Don't recurse into our own dump staging
+/var/backups/homelab/staging/

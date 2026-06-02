@@ -1,0 +1,36 @@
+[Unit]
+Description=Homelab backup (hot tier, every 6h)
+Documentation=file:///opt/homelab-backup/docs/ARCHITECTURE.md
+Wants=network-online.target
+After=network-online.target docker.service
+
+# Start condition: don't run if AC is unplugged on a laptop (heimdall = GE60).
+# This is a no-op on desktops/servers where the file doesn't exist.
+ConditionACPower=true
+
+[Service]
+Type=oneshot
+# %H = hostname.  The repo is laid out under /opt/homelab-backup with
+# hosts/<hostname>/backup-<tier>.sh.  systemd substitutes %H at runtime so
+# this same unit file works on every source host.
+ExecStart=/opt/homelab-backup/hosts/%H/backup-hot.sh
+TimeoutStartSec=30min
+
+# Hardening
+User=root
+Nice=19
+IOSchedulingClass=idle
+ProtectSystem=full
+ProtectHome=read-only
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Don't restart on failure -- the timer will retry on its next schedule.
+Restart=no
+
+# Failure notification: writes a status file that uptime-kuma scrapes.
+# (Stub for now; populate when monitoring is wired in.)
+# OnFailure=homelab-backup-failure-notify@%n.service
+
+[Install]
+WantedBy=multi-user.target

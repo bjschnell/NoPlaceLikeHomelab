@@ -1,0 +1,20 @@
+[Unit]
+Description=Homelab backup (hot tier) timer -- every 6 hours
+Documentation=file:///opt/homelab-backup/docs/ARCHITECTURE.md
+
+[Timer]
+# 00:15, 06:15, 12:15, 18:15.  Offset 15 min past the hour to avoid
+# colliding with other on-the-hour cron jobs.
+OnCalendar=00/6:15:00
+
+# Catch up if the machine was off when the timer fired
+Persistent=true
+
+# Spread starts across the fleet by up to 5 min so allfather and
+# heimdall don't hit archy simultaneously.
+RandomizedDelaySec=5min
+
+Unit=homelab-backup-hot.service
+
+[Install]
+WantedBy=timers.target
