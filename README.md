@@ -35,7 +35,7 @@ Internet
     └────────────────┘        └───────────────────────┘
 ```
 
-![Homelab architecture diagram](./assets/architecture.png)
+![Homelab architecture diagram](./architecture.png)
 
 <details>
 <summary>Diagram as Mermaid source (renders natively on GitHub)</summary>
