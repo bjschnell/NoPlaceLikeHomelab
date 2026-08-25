@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # hosts/heimdall/backup-full.sh
-# Full tier: weekly, pushes to archy + allfather.
+# Full tier: weekly, pushes to archy + odin.
 set -Eeuo pipefail
 IFS=$'\n\t'
 
@@ -24,7 +24,7 @@ export HOMELAB_PASSWORD_FILE="/root/.restic/heimdall.pwd"
 
 export HOMELAB_TARGETS=(
   "archy=rest:http://archy.home:8000/heimdall-full/"
-  "allfather=rest:http://allfather.home:8000/heimdall-full/"
+  "odin=rest:http://odin.home:8000/heimdall-full/"
 )
 
 export HOMELAB_KEEP_DAILY=0

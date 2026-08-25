@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# hosts/allfather/backup-hot.sh
+# hosts/odin/backup-hot.sh
 # Hot tier: Vaultwarden SQLite, every 6 hours, archy only.
 set -Eeuo pipefail
 IFS=$'\n\t'
@@ -12,18 +12,18 @@ source "${REPO_DIR}/lib/quiesce.sh"
 # shellcheck source=../../lib/restic-wrapper.sh
 source "${REPO_DIR}/lib/restic-wrapper.sh"
 
-LOG_FILE="/var/log/homelab-backup/allfather-hot.log"
-LOCK_FILE="/var/lock/homelab-backup-allfather-hot.lock"
+LOG_FILE="/var/log/homelab-backup/odin-hot.log"
+LOCK_FILE="/var/lock/homelab-backup-odin-hot.lock"
 DUMP_DIR="/var/backups/homelab/hot"
 
-export HOMELAB_HOST="allfather"
+export HOMELAB_HOST="odin"
 export HOMELAB_TIER="hot"
-export HOMELAB_SOURCES_FILE="${REPO_DIR}/hosts/allfather/sources-hot.txt"
-export HOMELAB_EXCLUDES_FILE="${REPO_DIR}/hosts/allfather/excludes.txt"
-export HOMELAB_PASSWORD_FILE="/root/.restic/allfather.pwd"
+export HOMELAB_SOURCES_FILE="${REPO_DIR}/hosts/odin/sources-hot.txt"
+export HOMELAB_EXCLUDES_FILE="${REPO_DIR}/hosts/odin/excludes.txt"
+export HOMELAB_PASSWORD_FILE="/root/.restic/odin.pwd"
 
 export HOMELAB_TARGETS=(
-  "archy=rest:http://archy.home:8000/allfather-hot/"
+  "archy=rest:http://archy.home:8000/odin-hot/"
 )
 
 export HOMELAB_KEEP_DAILY=7
@@ -35,11 +35,11 @@ export HOMELAB_CHECK_PCT=1
 mkdir -p "$(dirname "$LOG_FILE")"
 exec >>"$LOG_FILE" 2>&1
 
-log "=== allfather hot backup start ==="
+log "=== odin hot backup start ==="
 _on_exit() {
   local _rc=$?
   run_cleanup_chain
-  log "=== allfather hot backup end (exit=$_rc) ==="
+  log "=== odin hot backup end (exit=$_rc) ==="
   exit $_rc
 }
 trap _on_exit EXIT

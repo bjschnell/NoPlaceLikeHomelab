@@ -1,4 +1,4 @@
-# 004 — No direct port forwarding to Allfather or Muninn
+# 004 — No direct port forwarding to Odin or Muninn
 
 **Status:** Draft
 

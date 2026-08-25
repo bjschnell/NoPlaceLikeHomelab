@@ -1,4 +1,4 @@
-# Critical tier sources for allfather (nightly).
+# Critical tier sources for odin (nightly).
 
 # Pre-backup hook outputs
 /var/backups/homelab/critical/vaultwarden.sqlite3
@@ -14,7 +14,7 @@
 # without a compose file in /opt/stacks).
 /opt/dockge/data
 
-# SSH keys -- needed to re-establish trust if allfather is rebuilt
+# SSH keys -- needed to re-establish trust if odin is rebuilt
 /root/.ssh
 /home/xdx/.ssh
 

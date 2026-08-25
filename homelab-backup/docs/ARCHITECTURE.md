@@ -20,7 +20,7 @@
 | Host | Role | Notes |
 |---|---|---|
 | **archy**     | Legacy box, now: backup target + media on /Tres | i7-3930k, no ZFS pool, /Tres = 1.8 TB single drive |
-| **allfather** | App host: Vaultwarden, Homepage, pingpong, Dockge UI, cadvisor, node-exporter | Source + peer target |
+| **odin** | App host: Vaultwarden, Homepage, pingpong, Dockge UI, cadvisor, node-exporter | Source + peer target |
 | **heimdall**  | Edge: nginx, Authelia, AdGuard, Prometheus stack, Grafana, Uptime Kuma, Portainer | Source + peer target |
 
 ## Topology
@@ -34,7 +34,7 @@
               ┌─────────┴──────────┐
               │                    │
      ┌────────┴──────┐    ┌────────┴────────┐
-     │   allfather   │◄──►│    heimdall     │  peers back each other up
+     │   odin   │◄──►│    heimdall     │  peers back each other up
      │  (apps)       │    │  (edge)         │  for critical+full tiers
      └───────────────┘    └─────────────────┘
        /var/lib/restic-repos/  /var/lib/restic-repos/
@@ -42,8 +42,8 @@
 
 | Source host | Hot (6h)   | Critical (nightly)   | Full (weekly)        |
 |---|---|---|---|
-| **allfather** | archy only | archy + heimdall | archy + heimdall |
-| **heimdall**  | archy only | archy + allfather | archy + allfather |
+| **odin** | archy only | archy + heimdall | archy + heimdall |
+| **heimdall**  | archy only | archy + odin | archy + odin |
 
 ## Tiers
 
@@ -51,7 +51,7 @@
 
 Tiniest, most-critical secrets only. RPO = 6 hours.
 
-- **allfather**: Vaultwarden SQLite DB (`/opt/stacks/vaultwarden/vw-data/db.sqlite3`), via `sqlite3 .backup`
+- **odin**: Vaultwarden SQLite DB (`/opt/stacks/vaultwarden/vw-data/db.sqlite3`), via `sqlite3 .backup`
 - **heimdall**: Authelia SQLite DB (`/opt/stacks/authelia/data/db.sqlite3`), via `sqlite3 .backup`
 
 Retention: 7 daily snapshots. Critical tier owns longer history.
@@ -62,7 +62,7 @@ Hot tier ships to archy ONLY — running every 6 hours on three targets is waste
 
 Everything you need to rebuild a working homelab in a hurry. Sub-100MB per host.
 
-**allfather:**
+**odin:**
 - Vaultwarden DB (online dump)
 - All `/opt/stacks/*` (compose files + bind-mounted config dirs for homepage, pingpong, etc.)
 - `/opt/dockge/data` (Dockge stores stack definitions here, including AdGuard's compose)
@@ -99,23 +99,23 @@ Retention: 4 weekly, 3 monthly, 1 yearly.
 ## Why this structure
 
 ### Per-host repos, not shared
-Eight repos total (allfather × 3 tiers + heimdall × 3 tiers, replicated across targets). One blast radius per source host. Restic's cross-host dedup savings are negligible at homelab scale.
+Eight repos total (odin × 3 tiers + heimdall × 3 tiers, replicated across targets). One blast radius per source host. Restic's cross-host dedup savings are negligible at homelab scale.
 
 ### Per-source-host passwords (2 total)
-A compromise of allfather should not yield plaintext access to heimdall's repos. Single-global was rejected for this reason.
+A compromise of odin should not yield plaintext access to heimdall's repos. Single-global was rejected for this reason.
 
 ### rest-server `--append-only`
 A compromised source host cannot run `restic forget --prune` and destroy backups. Pruning is an offline operation done on the target host directly.
 
 ### Application-consistent, not crash-consistent
-SQLite DBs dumped via `sqlite3 .backup` (atomic) before restic snapshots them. Three SQLite DBs on heimdall are dumped this way; one on allfather (Vaultwarden).
+SQLite DBs dumped via `sqlite3 .backup` (atomic) before restic snapshots them. Three SQLite DBs on heimdall are dumped this way; one on odin (Vaultwarden).
 
 ### Two cadences = two systemd timers
 Critical at 03:00, full at 04:00 Sunday. Full unit declares `Conflicts=critical.service` so they cannot run concurrently. Each script has its own lock file too.
 
 ## Single-disk risk on archy
 
-Archy's `/Tres` is a single 1.8 TB drive. If it dies, the primary backup copy dies with it. Mitigation: heimdall and allfather hold each other's critical+full as peer copies, so for THOSE tiers the data survives. Hot tier (archy only) is fragile by design — if archy dies, you fall back to the previous night's critical snapshot from the peer.
+Archy's `/Tres` is a single 1.8 TB drive. If it dies, the primary backup copy dies with it. Mitigation: heimdall and odin hold each other's critical+full as peer copies, so for THOSE tiers the data survives. Hot tier (archy only) is fragile by design — if archy dies, you fall back to the previous night's critical snapshot from the peer.
 
 This is acknowledged technical debt. Migrating to a proper dedicated backup drive (or a ZFS mirror) is planned. Restic repos are portable: `rsync` the entire repo dir to the new disk and update the URL.
 
@@ -124,8 +124,8 @@ This is acknowledged technical debt. Migrating to a proper dedicated backup driv
 | Failure | Effect | Recovery |
 |---|---|---|
 | archy down | Hot tier fails entirely; critical/full still ship to peer | None; resumes when archy is back |
-| heimdall down | allfather's critical/full to heimdall fails; archy copy succeeds | None; resumes |
-| allfather down | heimdall's critical/full to allfather fails; archy copy succeeds | None; resumes |
+| heimdall down | odin's critical/full to heimdall fails; archy copy succeeds | None; resumes |
+| odin down | heimdall's critical/full to odin fails; archy copy succeeds | None; resumes |
 | /Tres dies on archy | Lose primary copy + hot tier history; peer copies intact | Replace drive, re-init repos, resume backups |
 | Single source host SSD dies | Live data lost on that host | Restore from peer or archy |
 | Source host compromised | Attacker has decryption key for THIS host's repos only | Rotate password (see ROTATION.md), prune compromise-window snapshots after rotation |

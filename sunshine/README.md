@@ -1,6 +1,6 @@
 # Sunshine bare-metal scripts
 
-Hyprland virtual-display scripts invoked by [Sunshine](https://app.lizardbyte.dev/Sunshine/) on Ragnarok (the daily-driver gaming desktop) when a Moonlight client connects. They create a headless monitor sized to the client's resolution and tear it down on disconnect, so streamed sessions get their own dedicated workspace without disturbing what's on the physical displays.
+Hyprland virtual-display scripts invoked by [Sunshine](https://app.lizardbyte.dev/Sunshine/) on Thor (the daily-driver gaming desktop) when a Moonlight client connects. They create a headless monitor sized to the client's resolution and tear it down on disconnect, so streamed sessions get their own dedicated workspace without disturbing what's on the physical displays.
 
 > **Background:** Sunshine runs bare metal on the desktop rather than in a container or on a server node. Reasoning is in [ADR 003](../decisions/003-moonlight-bare-metal.md).
 

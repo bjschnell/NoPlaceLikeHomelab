@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # hosts/heimdall/backup-critical.sh
-# Critical tier: nightly, pushes to archy + allfather.
+# Critical tier: nightly, pushes to archy + odin.
 set -Eeuo pipefail
 IFS=$'\n\t'
 
@@ -24,7 +24,7 @@ export HOMELAB_PASSWORD_FILE="/root/.restic/heimdall.pwd"
 
 export HOMELAB_TARGETS=(
   "archy=rest:http://archy.home:8000/heimdall-critical/"
-  "allfather=rest:http://allfather.home:8000/heimdall-critical/"
+  "odin=rest:http://odin.home:8000/heimdall-critical/"
 )
 
 export HOMELAB_KEEP_DAILY=7

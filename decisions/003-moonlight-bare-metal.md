@@ -6,11 +6,11 @@
 
 The household game-streams to a Steam Deck and other clients via Moonlight, which needs a Sunshine host with a capable GPU and low-latency hardware video encoding (NVENC). The question is *where* that host lives.
 
-The GPU that matters already sits in the daily-driver gaming desktop (Ragnarok — Ryzen 9 9950X3D, RTX 5080). The homelab server nodes are headless and either GPU-less or running an ancient card; none is a sensible place to do real-time game encoding. The two tempting "tidier" options — provision a GPU into a server node and containerize Sunshine, or stand up a dedicated streaming box — both add hardware, power, and passthrough complexity in service of a workload whose entire value proposition is *low latency and no overhead*.
+The GPU that matters already sits in the daily-driver gaming desktop (Thor — Ryzen 9 9950X3D, RTX 5080). The homelab server nodes are headless and either GPU-less or running an ancient card; none is a sensible place to do real-time game encoding. The two tempting "tidier" options — provision a GPU into a server node and containerize Sunshine, or stand up a dedicated streaming box — both add hardware, power, and passthrough complexity in service of a workload whose entire value proposition is *low latency and no overhead*.
 
 ## Decision
 
-Run **Sunshine bare metal on Ragnarok**, the gaming desktop, and keep game streaming **off the server nodes entirely**. Moonlight clients (Steam Deck, Odin, iPhone) connect to it directly over the LAN or Tailscale. The "everything in Docker on a server" pattern has an explicit, documented exception here: the GPU workload stays on the machine that already has the GPU, on bare metal.
+Run **Sunshine bare metal on Thor**, the gaming desktop, and keep game streaming **off the server nodes entirely**. Moonlight clients (Steam Deck, iPhone) connect to it directly over the LAN or Tailscale. The "everything in Docker on a server" pattern has an explicit, documented exception here: the GPU workload stays on the machine that already has the GPU, on bare metal.
 
 ## Alternatives considered
 
@@ -24,6 +24,6 @@ Run **Sunshine bare metal on Ragnarok**, the gaming desktop, and keep game strea
 - **Positive:** The GPU workload lives where the GPU is. Lowest latency, no passthrough layer to debug, no extra hardware or power draw.
 - **Positive:** Server nodes stay headless and lean — no GPU, no game-streaming concerns, consistent with the separation-of-responsibilities design.
 - **Negative:** Game streaming is only available when the gaming desktop is on, and it sits outside the Docker/Compose management, monitoring, and backup story that covers the server nodes. This is a deliberate, scoped exception — documented here so it's a known seam rather than a surprise.
-- **Negative:** Sunshine and GPU-driver updates on Ragnarok are a manual, out-of-band task. Accepted; it's a daily-driver machine that's maintained anyway.
+- **Negative:** Sunshine and GPU-driver updates on Thor are a manual, out-of-band task. Accepted; it's a daily-driver machine that's maintained anyway.
 
-> **Note:** An earlier plan considered moving *remote-desktop* Sunshine duties onto Allfather (7080) using Intel Quick Sync once it takes over more services. That's a possible future change for non-gaming remote access; real-time *game* streaming stays on the dedicated GPU in Ragnarok regardless.
+> **Note:** An earlier plan considered moving *remote-desktop* Sunshine duties onto Odin (7080) using Intel Quick Sync once it takes over more services. That's a possible future change for non-gaming remote access; real-time *game* streaming stays on the dedicated GPU in Thor regardless.

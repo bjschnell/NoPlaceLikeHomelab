@@ -25,7 +25,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | node_exporter | 9100 | Host-level metrics |
 | cAdvisor | 8080 | Per-container resource metrics |
 
-## Allfather — Primary Application Host (Dell OptiPlex 7080, i5-10500T)
+## Odin — Primary Application Host (Dell OptiPlex 7080, i5-10500T)
 
 | Service | Port (internal) | Purpose |
 |---|---|---|
@@ -33,7 +33,6 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | Home Assistant | 8123 | Home automation (runs in a VirtualBox VM) |
 | Vaultwarden | 80 | Self-hosted Bitwarden-compatible password manager |
 | PingPong | — | Machine-to-machine messaging (personal project) |
-| 2009Scape | 43594 | Self-hosted 2009-era RuneScape game server |
 | PostFix | 25, 587 | Mail relay (SMTP / submission) |
 | Restic | — | Automated backups (CLI, scheduled) → [ADR 006](./decisions/006-distributed-restic-append-only.md) · [`homelab-backup/`](./homelab-backup/) |
 | Dockge | 5001 | Docker Compose stack management UI |
@@ -64,7 +63,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 
 | Service | Host | Purpose |
 |---|---|---|
-| Sunshine *(bare metal)* | Ragnarok (gaming desktop) | GPU game-stream host; Moonlight clients (Steam Deck, etc.) connect over LAN / Tailscale → [ADR 003](./decisions/003-moonlight-bare-metal.md) · Hyprland virtual-display hooks in [`sunshine/`](./sunshine/) |
+| Sunshine *(bare metal)* | Thor (gaming desktop) | GPU game-stream host; Moonlight clients (Steam Deck, etc.) connect over LAN / Tailscale → [ADR 003](./decisions/003-moonlight-bare-metal.md) · Hyprland virtual-display hooks in [`sunshine/`](./sunshine/) |
 
 ## Off-Node: Security
 
@@ -76,7 +75,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 
 ## Access Patterns
 
-- **External:** `Internet → Cloudflare → NGINX (Heimdall) → Authelia → service`. Nothing on Allfather or Muninn is reachable from outside without passing the authenticated proxy.
+- **External:** `Internet → Cloudflare → NGINX (Heimdall) → Authelia → service`. Nothing on Odin or Muninn is reachable from outside without passing the authenticated proxy.
 - **Remote (trusted devices):** `Tailscale → service` over the WireGuard mesh. No router port-forwarding.
 - **LAN:** Direct host-to-host on the local network; AdGuard resolves internal subdomains locally.
-- **Game streaming:** Moonlight clients connect to Sunshine on Ragnarok directly over the LAN / Tailscale.
+- **Game streaming:** Moonlight clients connect to Sunshine on Thor directly over the LAN / Tailscale.

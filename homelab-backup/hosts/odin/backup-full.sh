@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# hosts/allfather/backup-full.sh
+# hosts/odin/backup-full.sh
 # Full tier: weekly, pushes to archy + heimdall.
 set -Eeuo pipefail
 IFS=$'\n\t'
@@ -12,19 +12,19 @@ source "${REPO_DIR}/lib/quiesce.sh"
 # shellcheck source=../../lib/restic-wrapper.sh
 source "${REPO_DIR}/lib/restic-wrapper.sh"
 
-LOG_FILE="/var/log/homelab-backup/allfather-full.log"
-LOCK_FILE="/var/lock/homelab-backup-allfather-full.lock"
+LOG_FILE="/var/log/homelab-backup/odin-full.log"
+LOCK_FILE="/var/lock/homelab-backup-odin-full.lock"
 DUMP_DIR="/var/backups/homelab/full"
 
-export HOMELAB_HOST="allfather"
+export HOMELAB_HOST="odin"
 export HOMELAB_TIER="full"
-export HOMELAB_SOURCES_FILE="${REPO_DIR}/hosts/allfather/sources-full.txt"
-export HOMELAB_EXCLUDES_FILE="${REPO_DIR}/hosts/allfather/excludes.txt"
-export HOMELAB_PASSWORD_FILE="/root/.restic/allfather.pwd"
+export HOMELAB_SOURCES_FILE="${REPO_DIR}/hosts/odin/sources-full.txt"
+export HOMELAB_EXCLUDES_FILE="${REPO_DIR}/hosts/odin/excludes.txt"
+export HOMELAB_PASSWORD_FILE="/root/.restic/odin.pwd"
 
 export HOMELAB_TARGETS=(
-  "archy=rest:http://archy.home:8000/allfather-full/"
-  "heimdall=rest:http://heimdall.home:8000/allfather-full/"
+  "archy=rest:http://archy.home:8000/odin-full/"
+  "heimdall=rest:http://heimdall.home:8000/odin-full/"
 )
 
 export HOMELAB_KEEP_DAILY=0
@@ -36,11 +36,11 @@ export HOMELAB_CHECK_PCT=5
 mkdir -p "$(dirname "$LOG_FILE")"
 exec >>"$LOG_FILE" 2>&1
 
-log "=== allfather full backup start ==="
+log "=== odin full backup start ==="
 _on_exit() {
   local _rc=$?
   run_cleanup_chain
-  log "=== allfather full backup end (exit=$_rc) ==="
+  log "=== odin full backup end (exit=$_rc) ==="
   exit $_rc
 }
 trap _on_exit EXIT

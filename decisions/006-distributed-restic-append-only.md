@@ -6,15 +6,15 @@
 
 The homelab holds data with very different recovery requirements. A Vaultwarden database is small and irreplaceable; an Authelia DB is small and easy to recreate but painful to lose at 2am; nginx and Authelia configs change rarely but are catastrophic to lose; `/etc` and crontabs are large-ish and only meaningfully change weekly. Treating all of this with one cadence either wastes I/O or accepts an RPO that is wrong for the most important data.
 
-The other shape of the problem is *where backups live*. The legacy setup was a single bash script on Archy that pulled everything to one disk on Archy. Two things make that bad: the source host can destroy its own backups (any `restic forget --prune` from a compromised host wipes history), and a single drive failure on Archy means total loss of the backup tier. Both have to be solved together — a "more frequent backups" answer that still lets a compromised host nuke history is not actually a backup story.
+The other shape of the problem is *where backups live*. The legacy setup was a single bash script on Muninn that pulled everything to one disk on Muninn. Two things make that bad: the source host can destroy its own backups (any `restic forget --prune` from a compromised host wipes history), and a single drive failure on Muninn means total loss of the backup tier. Both have to be solved together — a "more frequent backups" answer that still lets a compromised host nuke history is not actually a backup story.
 
 ## Decision
 
-Run **restic from each source host to two targets**: Archy (primary) and the opposite source host (peer). Targets run `rest-server --append-only`, so a source host can write new snapshots but cannot delete or prune them. Each source host has its **own** encryption password — Allfather's compromise yields Allfather repos only, not Heimdall's. Backups are tiered into three cadences whose names match their intent:
+Run **restic from each source host to two targets**: Muninn (primary) and the opposite source host (peer). Targets run `rest-server --append-only`, so a source host can write new snapshots but cannot delete or prune them. Each source host has its **own** encryption password — Odin's compromise yields Odin repos only, not Heimdall's. Backups are tiered into three cadences whose names match their intent:
 
-- **Hot** (every 6 hours): only the tiny irreplaceable secrets — Vaultwarden's SQLite DB on Allfather, Authelia's on Heimdall — dumped via `sqlite3 .backup` for application-consistency, shipped to Archy only.
-- **Critical** (nightly 03:00): everything needed to rebuild a working homelab — all `/opt/stacks/*`, Dockge stack definitions, SSH keys, restic config, nginx + letsencrypt on Heimdall. Shipped to Archy *and* the peer host.
-- **Full** (weekly Sunday 04:00): superset of critical plus full `/etc`, systemd overrides, crontabs. Also to Archy + peer.
+- **Hot** (every 6 hours): only the tiny irreplaceable secrets — Vaultwarden's SQLite DB on Odin, Authelia's on Heimdall — dumped via `sqlite3 .backup` for application-consistency, shipped to Muninn only.
+- **Critical** (nightly 03:00): everything needed to rebuild a working homelab — all `/opt/stacks/*`, Dockge stack definitions, SSH keys, restic config, nginx + letsencrypt on Heimdall. Shipped to Muninn *and* the peer host.
+- **Full** (weekly Sunday 04:00): superset of critical plus full `/etc`, systemd overrides, crontabs. Also to Muninn + peer.
 
 Per-source-host repos, not shared. Pruning happens **only** on the target hosts, out-of-band — never from the source.
 
@@ -31,9 +31,9 @@ Per-source-host repos, not shared. Pruning happens **only** on the target hosts,
 - **Positive:** A compromised source host can write garbage snapshots but cannot destroy history. Pruning requires shell access on the target, which an attacker on the source does not have.
 - **Positive:** A compromise of one source host's password does not decrypt the other's repos. Blast radius is one host.
 - **Positive:** RPO matches data criticality without over-running the cheap-but-bulky data on a 6-hour timer.
-- **Positive:** Peer replication means losing any single host (including Archy) still leaves a recent copy of the critical+full tiers on a second host.
-- **Negative:** Hot tier is on Archy only; if Archy is down, the worst case fallback is the previous night's critical snapshot from the peer (acceptable, explicitly traded).
-- **Negative:** Archy's `/Tres` is still a single 1.8 TB drive. The peer copies cover critical+full; hot is exposed. A proper dedicated backup drive (or ZFS mirror) on Archy is acknowledged tech debt, not a solved problem.
+- **Positive:** Peer replication means losing any single host (including Muninn) still leaves a recent copy of the critical+full tiers on a second host.
+- **Negative:** Hot tier is on Muninn only; if Muninn is down, the worst case fallback is the previous night's critical snapshot from the peer (acceptable, explicitly traded).
+- **Negative:** Muninn's `/Tres` is still a single 1.8 TB drive. The peer copies cover critical+full; hot is exposed. A proper dedicated backup drive (or ZFS mirror) on Muninn is acknowledged tech debt, not a solved problem.
 - **Negative:** Append-only means repos grow unbounded between manual prunes on the targets. Needs a scheduled monthly maintenance window per target — currently a runbook step, not yet automated.
 - **Negative:** No offsite copy yet. Local-only protects against drive failure and host compromise but not site loss (theft, fire). On the outstanding-work list.
 

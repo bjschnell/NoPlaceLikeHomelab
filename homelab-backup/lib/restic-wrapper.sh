@@ -2,7 +2,7 @@
 # lib/restic-wrapper.sh - the actual backup orchestration
 #
 # Caller exports:
-#   HOMELAB_HOST                 - hostname tag (allfather, heimdall)
+#   HOMELAB_HOST                 - hostname tag (odin, heimdall)
 #   HOMELAB_TIER                 - hot | critical | full
 #   HOMELAB_SOURCES_FILE         - path to a file with one source path per line
 #   HOMELAB_EXCLUDES_FILE        - path to excludes file (optional, may be empty)

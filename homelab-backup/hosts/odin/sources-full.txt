@@ -1,4 +1,4 @@
-# Full tier sources for allfather (weekly).
+# Full tier sources for odin (weekly).
 # Superset of critical.
 
 # --- everything from critical ---

@@ -13,7 +13,7 @@
 
 # AdGuard Home -- bind-mount source paths for the docker stack.
 # (The compose itself is managed by Dockge; see /opt/dockge/data on
-# allfather, which Dockge writes its state to.)
+# odin, which Dockge writes its state to.)
 # Excludes (querylog, stats) are handled in excludes.txt.
 /apps/adguardhome/conf
 /apps/adguardhome/work

@@ -1,4 +1,4 @@
-# Exclude patterns for allfather backups.
+# Exclude patterns for odin backups.
 
 # Common ephemera
 **/*.log

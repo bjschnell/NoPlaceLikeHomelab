@@ -10,7 +10,7 @@ OnCalendar=00/6:15:00
 # Catch up if the machine was off when the timer fired
 Persistent=true
 
-# Spread starts across the fleet by up to 5 min so allfather and
+# Spread starts across the fleet by up to 5 min so odin and
 # heimdall don't hit archy simultaneously.
 RandomizedDelaySec=5min
 

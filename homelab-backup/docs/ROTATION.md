@@ -3,7 +3,7 @@
 ## Restic repo passwords
 
 There are two restic passwords:
-- `/root/.restic/allfather.pwd` (used by allfather, decrypts allfather repos on every target)
+- `/root/.restic/odin.pwd` (used by odin, decrypts odin repos on every target)
 - `/root/.restic/heimdall.pwd` (used by heimdall, decrypts heimdall repos on every target)
 
 Each is also stored in your password manager.
@@ -14,14 +14,14 @@ Restic supports adding new passwords without rewriting the repo. Old snapshots r
 
 1. Generate a new password and add it as an additional key:
    ```bash
-   export RESTIC_REPOSITORY="rest:http://archy.home:8000/allfather-critical/"
-   export RESTIC_PASSWORD_FILE=/root/.restic/allfather.pwd       # current
+   export RESTIC_REPOSITORY="rest:http://archy.home:8000/odin-critical/"
+   export RESTIC_PASSWORD_FILE=/root/.restic/odin.pwd       # current
    restic key add --new-password-file /tmp/new.pwd
    ```
-2. Repeat for every repo this password unlocks (4 repos for allfather, 4 for heimdall).
+2. Repeat for every repo this password unlocks (4 repos for odin, 4 for heimdall).
 3. Update the source host:
    ```bash
-   install -m 600 /tmp/new.pwd /root/.restic/allfather.pwd
+   install -m 600 /tmp/new.pwd /root/.restic/odin.pwd
    ```
 4. Run a full backup cycle to confirm the new password works against every target.
 5. Once confirmed, remove the old key from each repo:
@@ -49,7 +49,7 @@ Rotate the root SSH keys whenever:
 # on the source host, generate a new key
 ssh-keygen -t ed25519 -f /root/.ssh/id_ed25519_new
 # install on every target
-for h in archy heimdall allfather; do
+for h in archy heimdall odin; do
   ssh-copy-id -i /root/.ssh/id_ed25519_new.pub root@$h
 done
 # verify, then swap
@@ -65,7 +65,7 @@ mv /root/.ssh/id_ed25519_new /root/.ssh/id_ed25519
 3. Generate a new password OUTSIDE the compromised host.
 4. On the targets, run `restic key add` with the new password against each affected repo (this requires the OLD password — recover from your password manager).
 5. Run `restic key remove` for the OLD key on each repo.
-6. Now the attacker's stolen `allfather.pwd` can no longer decrypt any new snapshots, only old ones.
+6. Now the attacker's stolen `odin.pwd` can no longer decrypt any new snapshots, only old ones.
 7. Rebuild the source host. Once clean, install the new password file and resume backups.
 8. After confidence is restored: forget+prune snapshots from the compromise window.
 

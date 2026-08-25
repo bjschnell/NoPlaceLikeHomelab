@@ -2,13 +2,13 @@
 # target-setup/install-rest-server.sh
 #
 # Idempotent installer: makes a host into a restic backup TARGET.
-# Run as root on each of archy, heimdall, allfather (each acts as a
+# Run as root on each of archy, heimdall, odin (each acts as a
 # target for OTHER hosts' backups).
 #
 # Defaults:
 #   archy     -> REPO_ROOT=/Tres/restic-repos
 #   heimdall  -> REPO_ROOT=/var/lib/restic-repos
-#   allfather -> REPO_ROOT=/var/lib/restic-repos
+#   odin -> REPO_ROOT=/var/lib/restic-repos
 #
 # What this does:
 #   1. Creates a system user `restic-backup` (no shell, no login)
@@ -51,15 +51,15 @@ ERROR: TARGET_REPOS not set.  Examples:
 
   # On archy (hosts everyone's backups; primary target):
   REPO_ROOT=/Tres/restic-repos \
-  TARGET_REPOS="allfather-hot allfather-critical allfather-full \
+  TARGET_REPOS="odin-hot odin-critical odin-full \
                 heimdall-hot heimdall-critical heimdall-full" \
     sudo ./install-rest-server.sh
 
-  # On heimdall (hosts allfather's critical+full as peer):
-  TARGET_REPOS="allfather-critical allfather-full" \
+  # On heimdall (hosts odin's critical+full as peer):
+  TARGET_REPOS="odin-critical odin-full" \
     sudo ./install-rest-server.sh
 
-  # On allfather (hosts heimdall's critical+full as peer):
+  # On odin (hosts heimdall's critical+full as peer):
   TARGET_REPOS="heimdall-critical heimdall-full" \
     sudo ./install-rest-server.sh
 EOF

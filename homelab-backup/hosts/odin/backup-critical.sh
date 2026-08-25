@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# hosts/allfather/backup-critical.sh
+# hosts/odin/backup-critical.sh
 # Critical tier: nightly, pushes to archy + heimdall.
 set -Eeuo pipefail
 IFS=$'\n\t'
@@ -12,19 +12,19 @@ source "${REPO_DIR}/lib/quiesce.sh"
 # shellcheck source=../../lib/restic-wrapper.sh
 source "${REPO_DIR}/lib/restic-wrapper.sh"
 
-LOG_FILE="/var/log/homelab-backup/allfather-critical.log"
-LOCK_FILE="/var/lock/homelab-backup-allfather-critical.lock"
+LOG_FILE="/var/log/homelab-backup/odin-critical.log"
+LOCK_FILE="/var/lock/homelab-backup-odin-critical.lock"
 DUMP_DIR="/var/backups/homelab/critical"
 
-export HOMELAB_HOST="allfather"
+export HOMELAB_HOST="odin"
 export HOMELAB_TIER="critical"
-export HOMELAB_SOURCES_FILE="${REPO_DIR}/hosts/allfather/sources-critical.txt"
-export HOMELAB_EXCLUDES_FILE="${REPO_DIR}/hosts/allfather/excludes.txt"
-export HOMELAB_PASSWORD_FILE="/root/.restic/allfather.pwd"
+export HOMELAB_SOURCES_FILE="${REPO_DIR}/hosts/odin/sources-critical.txt"
+export HOMELAB_EXCLUDES_FILE="${REPO_DIR}/hosts/odin/excludes.txt"
+export HOMELAB_PASSWORD_FILE="/root/.restic/odin.pwd"
 
 export HOMELAB_TARGETS=(
-  "archy=rest:http://archy.home:8000/allfather-critical/"
-  "heimdall=rest:http://heimdall.home:8000/allfather-critical/"
+  "archy=rest:http://archy.home:8000/odin-critical/"
+  "heimdall=rest:http://heimdall.home:8000/odin-critical/"
 )
 
 export HOMELAB_KEEP_DAILY=7
@@ -36,11 +36,11 @@ export HOMELAB_CHECK_PCT=2
 mkdir -p "$(dirname "$LOG_FILE")"
 exec >>"$LOG_FILE" 2>&1
 
-log "=== allfather critical backup start ==="
+log "=== odin critical backup start ==="
 _on_exit() {
   local _rc=$?
   run_cleanup_chain
-  log "=== allfather critical backup end (exit=$_rc) ==="
+  log "=== odin critical backup end (exit=$_rc) ==="
   exit $_rc
 }
 trap _on_exit EXIT
