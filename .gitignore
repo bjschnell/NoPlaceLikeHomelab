@@ -1,0 +1,8 @@
+# OMC operational state — session data, logs, plans, handoffs.
+# Not part of the documented homelab; never commit.
+.omc/
+
+# Editor / OS cruft
+.DS_Store
+*.swp
+*~
