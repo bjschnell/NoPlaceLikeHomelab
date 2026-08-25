@@ -56,9 +56,9 @@ The full distribution is:
 
 | Host       | `/root/.restic/<host>.pwd`     | `/tmp/restic-passwords/<host>.pwd` (temporary)        |
 |------------|--------------------------------|-------------------------------------------------------|
-| odin  | `odin.pwd`                | `heimdall.pwd`                                        |
-| heimdall   | `heimdall.pwd`                 | `odin.pwd`                                       |
-| archy      | (none — target-only)           | `odin.pwd` + `heimdall.pwd`                      |
+| odin       | `odin.pwd`                     | `heimdall.pwd`                                        |
+| heimdall   | `heimdall.pwd`                 | `odin.pwd`                                            |
+| archy      | (none — target-only)           | `odin.pwd` + `heimdall.pwd`                           |
 
 ### 4. Distribute password files from the trusted workstation
 

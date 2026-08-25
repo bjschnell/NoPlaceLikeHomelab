@@ -34,7 +34,7 @@
               ┌─────────┴──────────┐
               │                    │
      ┌────────┴──────┐    ┌────────┴────────┐
-     │   odin   │◄──►│    heimdall     │  peers back each other up
+     │     odin      │◄──►│    heimdall     │  peers back each other up
      │  (apps)       │    │  (edge)         │  for critical+full tiers
      └───────────────┘    └─────────────────┘
        /var/lib/restic-repos/  /var/lib/restic-repos/
@@ -42,8 +42,8 @@
 
 | Source host | Hot (6h)   | Critical (nightly)   | Full (weekly)        |
 |---|---|---|---|
-| **odin** | archy only | archy + heimdall | archy + heimdall |
-| **heimdall**  | archy only | archy + odin | archy + odin |
+| **odin**      | archy only | archy + heimdall | archy + heimdall |
+| **heimdall**  | archy only | archy + odin     | archy + odin     |
 
 ## Tiers
 

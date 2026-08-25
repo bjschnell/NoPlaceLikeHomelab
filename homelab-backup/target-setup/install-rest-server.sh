@@ -8,7 +8,7 @@
 # Defaults:
 #   archy     -> REPO_ROOT=/Tres/restic-repos
 #   heimdall  -> REPO_ROOT=/var/lib/restic-repos
-#   odin -> REPO_ROOT=/var/lib/restic-repos
+#   odin      -> REPO_ROOT=/var/lib/restic-repos
 #
 # What this does:
 #   1. Creates a system user `restic-backup` (no shell, no login)
