@@ -66,6 +66,12 @@ A flat reference of every service in the homelab: what it does, which node it ru
 |---|---|---|
 | Sunshine *(bare metal)* | Ragnarok (gaming desktop) | GPU game-stream host; Moonlight clients (Steam Deck, etc.) connect over LAN / Tailscale → [ADR 003](./decisions/003-moonlight-bare-metal.md) · Hyprland virtual-display hooks in [`sunshine/`](./sunshine/) |
 
+## Off-Node: Security
+
+| Service | Host | Purpose |
+|---|---|---|
+| Avigilon ACC ES Analytics Appliance | Standalone (own embedded OS) | Local edge video recording + analytics for 1x H3A bullet + 4x H4A dome cameras. Not Docker-hosted, no separate node in the compute cluster — plugs into LAN via its own dual gigabit uplink. See README.md § Security for full specs. |
+
 ---
 
 ## Access Patterns

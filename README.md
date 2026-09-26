@@ -246,3 +246,30 @@ Config files are intentionally excluded — they contain environment-specific va
 | Odin (laptop) | Windows 11 | Gaming / Windows workloads |
 | Steam Deck | SteamOS | Portable gaming · Moonlight client |
 | iPhone | iOS | Mobile · Tailscale client |
+
+---
+
+## Security — Avigilon ACC ES Analytics Appliance
+
+Standalone video surveillance appliance, acquired free from work. Not Docker-hosted — runs its own embedded OS/firmware and manages recording, storage, and video analytics locally at the edge.
+
+| Spec | Value |
+|---|---|
+| Model | Avigilon ACC ES Analytics Appliance (VMA-RPA-4Px) |
+| Recording rate | 80 Mbps · Stream out 50 Mbps |
+| Camera channels | 6 (4x PoE+ ports on-board, 60W total PoE output) |
+| Uplink | 2x 10/100/1000 Mbps RJ-45 |
+| Storage | 2TB or 4TB model (edge retention) |
+| Power | 48-54V DC, dedicated power supply (not standard AC) |
+| Dimensions | 239.5 x 169.4 x 44 mm (9.43" x 6.67" x 1.73") — fits 1U w/ official VMA-RPX-4PRMS1U rack tray |
+| Weight | 3.39 kg / 7.47 lb (incl. PSU + bracket) |
+| Operating temp | 0°C to 50°C, 10-90% RH non-condensing — **indoor/conditioned space only** |
+
+**Cameras (behind the appliance):**
+
+| Qty | Model | Type |
+|---|---|---|
+| 1 | Avigilon H3A | Bullet |
+| 4 | Avigilon H4A | Dome |
+
+Planned home: 1U slot in the DeskPi RackMate T1, alongside Allfather and its eventual OptiPlex 7080 successor (replacing Heimdall).
