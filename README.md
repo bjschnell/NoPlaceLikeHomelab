@@ -109,7 +109,7 @@ The most critical node. Handles all DNS, routing, authentication, and observabil
 | Service | Role |
 |---|---|
 | AdGuard Home | Network-wide DNS ad/tracker blocking |
-| NGINX *(bare metal)* | Reverse proxy — routes `*.portalgun.dev` subdomains |
+| NGINX *(bare metal)* | Reverse proxy — routes `*.<domain>` subdomains |
 | Authelia | SSO authentication layer in front of NGINX |
 | Tailscale | Overlay network for secure remote access |
 | Prometheus | Metrics collection (scrapes all three nodes) |
@@ -173,7 +173,7 @@ The oldest machine in the stack, repurposed as a dedicated storage and media nod
 
 **No direct port forwarding** to Odin or Muninn. Both nodes are only reachable via the reverse proxy (authenticated) or Tailscale. → [ADR 004](./decisions/004-no-direct-port-forwarding.md)
 
-**Physical layer:** an eero 6 Pro mesh handles routing and Wi-Fi, with unmanaged 1GbE switches fanning out to the wired nodes. It supports no VLANs and no prosumer controls, which the architecture routes around rather than relies on — the router does no security work here. It also caps the 3 Gbps ISP link at 1 Gbps. Staying on it is a deliberate call with named revisit triggers. → [ADR 007](./decisions/007-no-network-upgrade.md)
+**Physical layer:** an eero 6 Pro mesh handles routing and Wi-Fi, with unmanaged 1GbE switches fanning out to the wired nodes. It supports no VLANs and no prosumer controls, which the architecture routes around rather than relies on — the router does no security work here. It also caps the 3 Gbps ISP link at 1 Gbps. Staying on it was a deliberate call with named revisit triggers → [ADR 007](./decisions/007-no-network-upgrade.md), and the arrival of cameras fired the strongest one. The planned UniFi layout, with trusted, IoT and camera VLANs, is in [NETWORK.md](./NETWORK.md).
 
 ---
 
@@ -206,6 +206,7 @@ Running collection on the edge node means monitoring survives compute-node failu
 ├── README.md          # This file — architecture overview
 ├── SERVICES.md        # Flat reference: every service, its port, and its node
 ├── ROADMAP.md         # Planned work, and the conditions that promote each item
+├── NETWORK.md         # Physical network today, and the planned UniFi / VLAN segmentation
 ├── RUNBOOK.md         # Operational recipes: node maintenance, Docker, NGINX, Sunshine
 ├── LICENSE            # MIT
 ├── assets/

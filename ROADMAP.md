@@ -66,7 +66,9 @@ One thing to reconsider at replacement time rather than now: Heimdall's 8GB of R
 
 ## Camera NVR — future Frigate host
 
-A dedicated machine for a Frigate NVR. No cameras purchased, no urgency, and deliberately gated — see below.
+> **Update — September 2026:** an Avigilon ACC ES appliance and five cameras came free from work (see the [README](./README.md#security--avigilon-acc-es-analytics-appliance)). The appliance handles recording and analytics itself, so whether a separate Frigate host is still wanted is an open question. The isolation problem below is now live rather than hypothetical, and is addressed by the plan in [NETWORK.md](./NETWORK.md).
+
+A dedicated machine for a Frigate NVR. No urgency, and deliberately gated — see below.
 
 **Target hardware:** Dell OptiPlex SFF or Micro, i5 8th gen or newer, ~$150–200 CAD used. Intel 8th gen is the floor because Quick Sync does the heavy lifting for camera stream decode; without it the CPU cost of continuous multi-stream object detection preprocessing gets ugly. 16GB RAM minimum, NVMe boot plus a large HDD or SSD for retention.
 
@@ -76,14 +78,14 @@ A dedicated machine for a Frigate NVR. No cameras purchased, no urgency, and del
 
 **Why its own machine rather than a container on Odin:** camera recording is a continuous write-heavy workload with a 24/7 duty cycle, and object detection is bursty and resource-hungry. Isolating it means an NVR problem doesn't become a Vaultwarden problem. It also keeps the security-camera segment separable from everything else, which matters more than the resource argument.
 
-*Blocked on:* [ADR 007](./decisions/007-no-network-upgrade.md) being revisited. Cameras belong on an isolated segment with no internet access, reachable only by the NVR — and the current eero mesh cannot express that. Buying cameras before the network can isolate them means running them flat, which is worse than not having them. This dependency runs in both directions: the camera project is the strongest single argument for replacing the router.
+*Blocked on:* the network segmentation in [NETWORK.md](./NETWORK.md). Cameras belong on an isolated segment with no internet access, reachable only by the NVR — and the current eero mesh cannot express that. Buying cameras before the network can isolate them means running them flat, which is worse than not having them. This dependency runs in both directions: the camera project is the strongest single argument for replacing the router.
 
 ---
 
-## Network — wired run to the office
+## Network — wired run to the server switch
 
-Independent of the router question and available at any time: pulling Ethernet from the office to the upstairs closet would put Thor on a wired path instead of the mesh's wireless backhaul.
+Independent of the router question and available at any time: pulling Ethernet to the server switch would put Odin, Muninn and the camera NVR on a wired path instead of the mesh's wireless backhaul.
 
-This needs no new hardware and is unaffected by [ADR 007](./decisions/007-no-network-upgrade.md) — it's cable and labour. It is the only network improvement currently on the list that isn't gated on the router decision.
+This needs no new hardware — it's cable and labour — and it is also a prerequisite for the UniFi plan in [NETWORK.md](./NETWORK.md), which retires the mesh.
 
 *Blocked on:* willingness to run the cable.

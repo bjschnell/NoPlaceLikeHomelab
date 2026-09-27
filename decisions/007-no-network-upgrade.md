@@ -1,6 +1,6 @@
 # 007 — Stay on the eero mesh; no router or switch upgrade
 
-**Status:** Accepted
+**Status:** Accepted — revisit triggered (September 2026). See [Update](#update--september-2026).
 
 ## Context
 
@@ -35,5 +35,16 @@ The named revisit triggers:
 - **Positive:** The decision is trigger-based rather than timed. The camera project cannot quietly proceed on the assumption that VLAN isolation exists — this ADR makes the dependency explicit.
 - **Negative:** Roughly two thirds of the ISP pipe stays unreachable. Accepted: no device on the network can currently consume it.
 - **Negative:** No VLAN capability means no network-level isolation for any untrusted device. Today that is a hypothetical; the moment cameras arrive it becomes a real gap, which is why the camera project is gated on this decision being revisited.
-- **Negative:** Thor reaches the network over the mesh's wireless backhaul rather than a wired run to the upstairs closet. Pulling that cable is an independent improvement available at any time and does not require replacing any hardware.
+- **Negative:** The server switch (Odin, Muninn) reaches the rest of the network over the mesh's wireless backhaul rather than a wired run. Pulling that cable is an independent improvement available at any time and does not require replacing any hardware.
 - **Negative:** Because the eero cannot do meaningful port forwarding or QoS, the architecture's reliance on Tailscale and the authenticated reverse proxy is load-bearing rather than merely preferred. This is consistent with [ADR 002](./002-authelia-at-boundary.md) and [ADR 004](./004-no-direct-port-forwarding.md), but it is a constraint the router is imposing, not purely a design choice.
+
+## Update — September 2026
+
+The camera trigger fired, though not in the order this ADR planned for. An Avigilon ACC ES appliance and five cameras came free from work, so cameras now exist on the flat network — the "real gap" named under Consequences. The decision to stay put no longer holds, and the replacement design is in [NETWORK.md](../NETWORK.md).
+
+Two things changed between this ADR and that design:
+
+- **The preferred hardware moved from the TP-Link BE9700 to a UniFi gateway plus a separately placed AP.** The router-plus-mesh shape can't put an IoT SSID on its own VLAN, and a combo unit ties Wi-Fi coverage to wherever the fibre lands.
+- **The wireless-backhaul hop feeds the servers, not Thor.** Earlier versions of this ADR had that the wrong way round; the Consequences bullet above is corrected.
+
+This ADR stays as the record of why nothing changed until now. A new ADR will supersede it once the gateway is bought.

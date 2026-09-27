@@ -13,7 +13,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | Service | Port (internal) | Purpose |
 |---|---|---|
 | AdGuard Home | 53 (DNS), 80 (web) | Network-wide DNS ad/tracker blocking + local subdomain resolution |
-| NGINX *(bare metal)* | 80, 443 | Reverse proxy — terminates external traffic, routes `*.portalgun.dev` |
+| NGINX *(bare metal)* | 80, 443 | Reverse proxy — terminates external traffic, routes `*.<domain>` |
 | Authelia | 9091 | SSO / forward-auth layer in front of NGINX |
 | Tailscale | — | WireGuard overlay daemon (uses UDP 41641 for direct connections) |
 | Prometheus | 9090 | Metrics collection — scrapes all three nodes |
