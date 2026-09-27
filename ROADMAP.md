@@ -66,7 +66,7 @@ One thing to reconsider at replacement time rather than now: Heimdall's 8GB of R
 
 ## Camera NVR — future Frigate host
 
-> **Update — September 2026:** an Avigilon ACC ES appliance and five cameras came free from work (see the [README](./README.md#security--avigilon-acc-es-analytics-appliance)). The appliance handles recording and analytics itself, so whether a separate Frigate host is still wanted is an open question. The isolation problem below is now live rather than hypothetical, and is addressed by the plan in [NETWORK.md](./NETWORK.md).
+> **Update — September 2026:** an Avigilon ACC ES appliance (free from work) and five cameras arrived (see the [README](./README.md#security--avigilon-acc-es-analytics-appliance)). The appliance handles recording and analytics itself, so whether a separate Frigate host is still wanted is an open question. The isolation problem below is now live rather than hypothetical, and is addressed by the plan in [NETWORK.md](./NETWORK.md).
 
 A dedicated machine for a Frigate NVR. No urgency, and deliberately gated — see below.
 

@@ -40,7 +40,7 @@ The named revisit triggers:
 
 ## Update — September 2026
 
-The camera trigger fired, though not in the order this ADR planned for. An Avigilon ACC ES appliance and five cameras came free from work, so cameras now exist on the flat network — the "real gap" named under Consequences. The decision to stay put no longer holds, and the replacement design is in [NETWORK.md](../NETWORK.md).
+The camera trigger fired, though not in the order this ADR planned for. An Avigilon ACC ES appliance (free from work) and five cameras arrived, so cameras now exist on the flat network — the "real gap" named under Consequences. The decision to stay put no longer holds, and the replacement design is in [NETWORK.md](../NETWORK.md).
 
 Two things changed between this ADR and that design:
 
