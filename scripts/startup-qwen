@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+#
+# startup-qwen — launch llama-server for Qwen3.6-35B, detached so it survives
+# an SSH disconnect. Stop it with the separate `stop-qwen` script.
+#
+# Usage:
+#   startup-qwen                    # start in background, default ncmoe (20)
+#   startup-qwen -ncmoe 24          # start in background, override ncmoe
+#   startup-qwen 24                 # bare number also sets ncmoe
+#   startup-qwen 24 --port 9090     # extra flags pass through to llama-server
+#
+#   startup-qwen status             # is it running? (pid, port)
+#   startup-qwen logs               # tail -f the server log
+#   startup-qwen restart -ncmoe 16  # stop then start with new args
+#   startup-qwen fg  -ncmoe 24      # run in the FOREGROUND (old behavior)
+#
+# To stop:  stop-qwen   (or: startup-qwen restart ...)
+#
+# The server keeps running after you close the SSH session (nohup + disown).
+
+set -euo pipefail
+
+# Shared config + stop helpers (SERVER, STATE_DIR, PIDFILE, LOGFILE, do_stop...)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/qwen-common.sh"
+
+# ---- Start-specific defaults (edit these to change the baseline) -----------
+NCMOE=20
+MODEL="$HOME/models/qwen3.6/Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf"
+HOST=0.0.0.0
+PORT=8080
+# ---------------------------------------------------------------------------
+
+# Parse ncmoe + collect any pass-through flags from the given args.
+parse_args() {
+  EXTRA=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -ncmoe|--ncmoe)  NCMOE="$2"; shift 2 ;;
+      [0-9]*)          NCMOE="$1"; shift ;;
+      *)               EXTRA+=("$1"); shift ;;
+    esac
+  done
+}
+
+# Build the full server argv into the global array CMD.
+build_cmd() {
+  CMD=(
+    "$SERVER"
+    -m "$MODEL"
+    --alias qwen3.6:35b-a3b
+    --host "$HOST" --port "$PORT"
+    -ngl 999 -ncmoe "$NCMOE" --no-mmap
+    -c 131072
+    -fa on
+    --cache-type-k q8_0 --cache-type-v q8_0
+    -ub 2048
+    --jinja
+    --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 --presence-penalty 0 --repeat-penalty 1.0
+    ${EXTRA[@]+"${EXTRA[@]}"}
+  )
+}
+
+do_start() {
+  if is_running; then
+    echo "startup-qwen: already running (pid $(cat "$PIDFILE")). Use 'stop-qwen' or 'restart' first." >&2
+    exit 1
+  fi
+  build_cmd
+  echo "Starting llama-server (ncmoe=$NCMOE) on $HOST:$PORT ..."
+  nohup "${CMD[@]}" >"$LOGFILE" 2>&1 </dev/null &
+  local pid=$!
+  disown
+  echo "$pid" > "$PIDFILE"
+  echo "Started (pid $pid). Logs: $LOGFILE"
+  echo "  startup-qwen logs      # follow output"
+  echo "  startup-qwen status    # check state"
+  echo "  stop-qwen              # shut it down"
+}
+
+do_status() {
+  if is_running; then
+    echo "running (pid $(cat "$PIDFILE")) on $HOST:$PORT"
+  else
+    echo "not running"
+    exit 1
+  fi
+}
+
+# ---- Dispatch --------------------------------------------------------------
+cmd="${1:-start}"
+case "$cmd" in
+  stop)     do_stop ;;                                    # convenience alias of stop-qwen
+  status)   do_status ;;
+  logs)     shift || true; exec tail -f "$LOGFILE" ;;
+  restart)  shift; parse_args "$@"; do_stop; do_start ;;
+  fg|foreground)
+            shift; parse_args "$@"; build_cmd; exec "${CMD[@]}" ;;
+  start)    shift || true; parse_args "$@"; do_start ;;
+  *)        parse_args "$@"; do_start ;;                  # bare flags => start
+esac

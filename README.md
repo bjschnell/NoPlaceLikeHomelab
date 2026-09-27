@@ -220,6 +220,7 @@ Running collection on the edge node means monitoring survives compute-node failu
 │   ├── 006-distributed-restic-append-only.md
 │   └── 007-no-network-upgrade.md
 ├── homelab-backup/    # Distributed restic backup: scripts, systemd units, restore + rotation runbooks
+├── scripts/           # Standalone ops scripts: local LLM server, Samba users, emergency reboot
 └── sunshine/          # Sunshine bare-metal scripts (Hyprland virtual display for Moonlight streaming)
 ```
 

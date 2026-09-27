@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# stop-qwen — stop the background Qwen llama-server started by startup-qwen.
+#
+# Usage:
+#   stop-qwen        # graceful stop (SIGKILL fallback), works even if the
+#                    # PID file is missing/stale (matches the server binary).
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/qwen-common.sh"
+
+do_stop
