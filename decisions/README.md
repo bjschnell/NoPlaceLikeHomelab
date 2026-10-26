@@ -32,7 +32,7 @@ Choices deliberately *not* made. These are recorded because the reasoning behind
 
 **Don't buy a laptop for couch Moonlight use.** The existing hardware already covers it, and a tablet is the better form factor for that spot. *Reopen if:* the existing couch client dies.
 
-**Don't replace Heimdall (the GE60) preemptively.** It is stable and its workload is light. Replacement hardware is picked and cheap, so the plan can execute on short notice. → [ROADMAP](../ROADMAP.md). *Reopen if:* it becomes unreliable, or the monitoring workload outgrows 8GB of RAM.
+**Don't replace Heimdall (the GE60) preemptively.** *Overtaken (October 2026): it died, and the pre-picked OptiPlex replacement was used.* It is stable and its workload is light. Replacement hardware is picked and cheap, so the plan can execute on short notice. → [ROADMAP](../ROADMAP.md). *Reopen if:* it becomes unreliable, or the monitoring workload outgrows 8GB of RAM.
 
 **Don't buy cameras before the NVR host and network segmentation exist.** Cameras on a flat network with internet access are a liability rather than a security improvement. The isolation they need isn't currently expressible on the eero. *Reopen if:* [ADR 007](./007-no-network-upgrade.md) is revisited and VLAN capability lands. *Overtaken (September 2026):* an Avigilon appliance (free from work) and five cameras arrived anyway, so the liability this entry warned about is now real, and it is the reason the network plan is active.
 

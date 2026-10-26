@@ -1,5 +1,7 @@
 # homelab-backup
 
+> **Status — October 2026: being rebuilt.** This pipeline predates the current fleet. The Odin backup jobs stopped working silently (a missing restic password file and source paths that no longer exist), and the layout below does not yet include **Huginn** or reflect that Heimdall was rebuilt on new hardware. The Muninn target is also mid-hardware-change. Treat the architecture here as the design intent, not a description of what is running. Huginn's Radicale data currently has no backup.
+
 Distributed restic-based backup. Replaces the old monolithic bash script that ran on archy.
 
 > **Names in this directory are live hostnames.** `odin`, `heimdall` and `archy` are what the

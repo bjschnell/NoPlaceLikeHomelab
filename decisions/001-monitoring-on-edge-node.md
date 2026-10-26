@@ -2,6 +2,8 @@
 
 **Status:** Accepted
 
+> **Update — October 2026:** still in force. The original edge node (a GE60 laptop) died; monitoring ran on Odin for a few weeks of emergency recovery, then moved back to Heimdall's replacement (Dell OptiPlex 7060). There are now four nodes — Huginn (Hermes/Alice) was added — and Prometheus scrapes it as well. Odin also keeps a redundant Uptime Kuma instance so the edge node is not the only observer of itself.
+
 ## Context
 
 The stack has three nodes: Heimdall (edge/network), Odin (primary application host), and Muninn (NAS/media). The observability stack — Prometheus, Grafana, Uptime Kuma, plus the `cAdvisor`/`node_exporter` agents Prometheus scrapes — has to live *somewhere*.

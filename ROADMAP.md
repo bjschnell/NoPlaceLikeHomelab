@@ -49,18 +49,11 @@ Either way the first pass should cover only the irreplaceable set — photos, do
 
 ## Heimdall replacement — lightweight network node
 
-Heimdall is an MSI GE60 laptop from 2013 running the edge: DNS, reverse proxy, auth and the entire monitoring stack. It's stable and the workload is light, so this is explicitly **not** something to do preemptively — see [Decided against](./decisions/README.md#decided-against). The plan exists so that when the machine dies, the replacement is a purchase and an afternoon rather than a research project.
+> **Done (October 2026).** The GE60 died in September. After a stretch with its roles temporarily on Odin, Heimdall was rebuilt on a Dell OptiPlex 7060 Micro (i5-8500T, 8GB) — the OptiPlex-class option this entry had pre-picked — and the assistant stack went to a separate new node, Huginn. Kept below as a record of the plan.
 
-**Candidates**, both around $100–150 CAD used:
+Original plan: when the machine dies, the replacement is a purchase and an afternoon rather than a research project. Candidates were Dell OptiPlex 3050/3060 Micro or Lenovo ThinkCentre M710q/M720q at roughly $100–150 CAD used; requirements were wired Ethernet, reliable headless Linux and low idle draw.
 
-- Dell OptiPlex 3050 / 3060 Micro — i5 7th or 8th gen, enterprise build, designed for 24/7 duty
-- Lenovo ThinkCentre M710q / M720q — same tier, equally durable
-
-**Requirements:** wired Ethernet (this node's services are network-critical and cannot depend on Wi-Fi), reliable headless Linux, low idle draw for 24/7 operation, and cheap. The workload is DNS and monitoring; any of the above is already overkill.
-
-One thing to reconsider at replacement time rather than now: Heimdall's 8GB of RAM is the constraint that keeps Prometheus retention and scrape cardinality modest, a limitation [ADR 001](./decisions/001-monitoring-on-edge-node.md) accepts deliberately. A 16–32GB replacement would lift it, and that's a reason to size the replacement generously despite the trivial service load.
-
-*Blocked on:* the GE60 failing or becoming unreliable.
+*Still open:* the RAM question this entry raised. Measured usage on the new Heimdall is about 2 GB of 7.6 GB, so no upgrade is warranted for now.
 
 ---
 
