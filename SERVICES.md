@@ -8,12 +8,12 @@ A flat reference of every service in the homelab: what it does, which node it ru
 
 ---
 
-## Heimdall — Edge / Network / Monitoring (Dell OptiPlex 7060 Micro)
+## Heimdall — Edge / Network / Monitoring (HP EliteDesk 800 G6)
 
 | Service | Port (internal) | Purpose |
 |---|---|---|
 | AdGuard Home | 53 (DNS), 80 (web) | Primary network DNS ad/tracker blocking + local subdomain resolution |
-| NGINX *(bare metal)* | 80, 443 | Reverse proxy — terminates external traffic, routes `*.<domain>` (including Home Assistant) |
+| NGINX *(Docker)* | 80, 443 | Reverse proxy — terminates external traffic, routes `*.<domain>` (including Home Assistant) |
 | Authelia (+ Valkey) | 9091 | SSO / forward-auth layer in front of NGINX |
 | Tailscale | — | WireGuard overlay daemon; tailnet DNS points at this node |
 | Prometheus | 9090 | Metrics collection — scrapes every node |
@@ -37,7 +37,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | Tailscale | — | WireGuard overlay daemon |
 | node_exporter + cAdvisor | 9100, 8082 | Host and container metrics (bound to the tailnet address) |
 
-## Odin — Legacy Application Host (Dell OptiPlex 7080, i5-10500T)
+## Thor — Application Host (HP EliteDesk 800 G6, i5-10600)
 
 | Service | Port (internal) | Purpose |
 |---|---|---|
@@ -54,7 +54,7 @@ A flat reference of every service in the homelab: what it does, which node it ru
 | cAdvisor | 8080 | Per-container resource metrics |
 | Restic | — | Backup source — **currently not functioning**, being rebuilt → [`homelab-backup/`](./homelab-backup/) |
 
-Odin no longer runs Postfix (the mail relay now runs bare metal on Muninn). Home Assistant (8123) runs in a separate VM on the LAN, not on Odin, and is exposed through the Heimdall proxy.
+Thor no longer runs Postfix (the mail relay now runs bare metal on Muninn). Home Assistant (8123) runs in a VirtualBox VM on this node (LAN address 192.168.4.41) and is exposed through the Heimdall proxy.
 
 ## Muninn — NAS / Media (Intel i7-3930K · hostname `archy`)
 
@@ -70,7 +70,7 @@ Odin no longer runs Postfix (the mail relay now runs bare metal on Muninn). Home
 | FlareSolverr | 8191 | Cloudflare challenge solver for indexers |
 | Nextcloud | 80, 443 | File sync and cloud storage |
 | Samba *(bare metal)* | 139, 445 | LAN file sharing (SMB) |
-| Portainer Agent | 9001 | Exposes this node to the Portainer server on Odin |
+| Portainer Agent | 9001 | Exposes this node to the Portainer server on Thor |
 | Postfix *(bare metal)* | 25, 587 | Mail relay (SMTP / submission) |
 | Dovecot *(bare metal)* | 143, 993 | IMAP/POP3 mail server |
 | Valkey *(bare metal)* | 6379 | Key-value store |
@@ -86,7 +86,7 @@ Odin no longer runs Postfix (the mail relay now runs bare metal on Muninn). Home
 
 | Service | Host | Purpose |
 |---|---|---|
-| Sunshine *(bare metal)* | Thor (gaming desktop) | GPU game-stream host; Moonlight clients (Steam Deck, etc.) connect over LAN / Tailscale → [ADR 003](./decisions/003-moonlight-bare-metal.md) · Hyprland virtual-display hooks in [`sunshine/`](./sunshine/) |
+| Sunshine *(bare metal)* | Odin (gaming desktop) | GPU game-stream host; Moonlight clients (Steam Deck, etc.) connect over LAN / Tailscale → [ADR 003](./decisions/003-moonlight-bare-metal.md) · Hyprland virtual-display hooks in [`sunshine/`](./sunshine/) |
 
 ## Off-Node: Security
 
@@ -98,7 +98,7 @@ Odin no longer runs Postfix (the mail relay now runs bare metal on Muninn). Home
 
 ## Access Patterns
 
-- **External:** `Internet → Cloudflare → NGINX (Heimdall) → Authelia → service`. Nothing on Huginn, Odin or Muninn is reachable from outside without passing the authenticated proxy.
+- **External:** `Internet → Cloudflare → NGINX (Heimdall) → Authelia → service`. Nothing on Huginn, Thor or Muninn is reachable from outside without passing the authenticated proxy.
 - **Remote (trusted devices):** `Tailscale → service` over the WireGuard mesh. No router port-forwarding.
 - **LAN:** Direct host-to-host on the local network; AdGuard resolves internal subdomains locally.
-- **Game streaming:** Moonlight clients connect to Sunshine on Thor directly over the LAN / Tailscale.
+- **Game streaming:** Moonlight clients connect to Sunshine on Odin directly over the LAN / Tailscale.

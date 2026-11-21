@@ -12,7 +12,7 @@ These two are the only items where waiting carries real risk. Everything below t
 
 ### UPS for the server nodes
 
-An 850–1500VA CyberPower or APC unit covering Heimdall, Odin and Muninn.
+An 850–1500VA CyberPower or APC unit covering Heimdall, Thor and Muninn.
 
 The concern is not uptime, it's the write path. Muninn's storage is aging spinning disks and an abrupt power cut mid-write is one of the shorter routes to data loss in the whole stack. A UPS converts a hard power loss into a controlled shutdown.
 
@@ -49,7 +49,7 @@ Either way the first pass should cover only the irreplaceable set — photos, do
 
 ## Heimdall replacement — lightweight network node
 
-> **Done (October 2026).** The GE60 died in September. After a stretch with its roles temporarily on Odin, Heimdall was rebuilt on a Dell OptiPlex 7060 Micro (i5-8500T, 8GB) — the OptiPlex-class option this entry had pre-picked — and the assistant stack went to a separate new node, Huginn. Kept below as a record of the plan.
+> **Done (October 2026).** The GE60 died in September. After a stretch with its roles temporarily on Thor, Heimdall was rebuilt on a Dell OptiPlex 7060 Micro (i5-8500T, 8GB) — the OptiPlex-class option this entry had pre-picked — and the assistant stack went to a separate new node, Huginn. Kept below as a record of the plan. *Update (November 2026):* the 7060 was returned and Heimdall now runs on an HP EliteDesk 800 G6 Mini.
 
 Original plan: when the machine dies, the replacement is a purchase and an afternoon rather than a research project. Candidates were Dell OptiPlex 3050/3060 Micro or Lenovo ThinkCentre M710q/M720q at roughly $100–150 CAD used; requirements were wired Ethernet, reliable headless Linux and low idle draw.
 
@@ -69,7 +69,7 @@ A dedicated machine for a Frigate NVR. No urgency, and deliberately gated — se
 
 **Optional:** a Google Coral TPU USB accelerator (~$40–60 CAD) moves inference off the CPU entirely and is the single best value add-on for Frigate. A small PoE switch if the cameras are PoE, keeping power and data on one run.
 
-**Why its own machine rather than a container on Odin:** camera recording is a continuous write-heavy workload with a 24/7 duty cycle, and object detection is bursty and resource-hungry. Isolating it means an NVR problem doesn't become a Vaultwarden problem. It also keeps the security-camera segment separable from everything else, which matters more than the resource argument.
+**Why its own machine rather than a container on Thor:** camera recording is a continuous write-heavy workload with a 24/7 duty cycle, and object detection is bursty and resource-hungry. Isolating it means an NVR problem doesn't become a Vaultwarden problem. It also keeps the security-camera segment separable from everything else, which matters more than the resource argument.
 
 *Blocked on:* the network segmentation in [NETWORK.md](./NETWORK.md). Cameras belong on an isolated segment with no internet access, reachable only by the NVR — and the current eero mesh cannot express that. Buying cameras before the network can isolate them means running them flat, which is worse than not having them. This dependency runs in both directions: the camera project is the strongest single argument for replacing the router.
 
@@ -77,7 +77,7 @@ A dedicated machine for a Frigate NVR. No urgency, and deliberately gated — se
 
 ## Network — wired run to the server switch
 
-Independent of the router question and available at any time: pulling Ethernet to the server switch would put Odin, Muninn and the camera NVR on a wired path instead of the mesh's wireless backhaul.
+Independent of the router question and available at any time: pulling Ethernet to the server switch would put Thor, Muninn and the camera NVR on a wired path instead of the mesh's wireless backhaul.
 
 This needs no new hardware — it's cable and labour — and it is also a prerequisite for the UniFi plan in [NETWORK.md](./NETWORK.md), which retires the mesh.
 

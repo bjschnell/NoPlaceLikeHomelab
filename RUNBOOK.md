@@ -8,9 +8,9 @@ Scoped to the homelab: the three server nodes (all Arch), the Docker layer, the 
 
 ---
 
-## Arch node maintenance
+## Node maintenance (Arch notes)
 
-All three nodes run Arch, so these apply everywhere. Heimdall is the one that actually needs them — it's the oldest hardware with the smallest disk.
+Muninn runs Arch. Heimdall and Thor run Debian 13, so the package-cache commands below need `apt` equivalents there. All three have small (256GB) disks, so the disk-reclaim steps still apply everywhere.
 
 ### Reclaim disk space
 
@@ -116,7 +116,7 @@ cd /opt/stacks/service-name && docker compose down
 tar czf service-migration.tar.gz service-name/
 
 # Transfer
-scp service-migration.tar.gz user@odin:/opt/stacks/
+scp service-migration.tar.gz user@thor:/opt/stacks/
 
 # Destination: extract and start
 cd /opt/stacks && tar xzf service-migration.tar.gz
@@ -161,7 +161,7 @@ New services get Authelia by default — see [ADR 002](./decisions/002-authelia-
 
 ---
 
-## Sunshine host (Thor)
+## Sunshine host (Odin)
 
 Script wiring and the virtual-display hooks are documented in [`sunshine/`](./sunshine/). These are the failure modes that come up during streamed sessions.
 
