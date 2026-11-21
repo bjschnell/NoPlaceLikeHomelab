@@ -4,6 +4,8 @@ The *why* behind the homelab's structure. Each ADR captures the context that for
 
 The [README](../README.md) describes what is deployed. These describe why it looks like that.
 
+> **Naming note (2026-11-20).** The ADRs are historical and use the node names current when they were written. In them, **Odin** is the retired Dell OptiPlex 7080 application host (its stack now runs on **Thor**, an HP EliteDesk), **Thor** is the gaming/dev desktop (now named **Odin**), and **Heimdall** is the original MSI GE60 edge laptop or its OptiPlex 7060 successor (now an HP EliteDesk). They are left unedited on purpose. See the [README](../README.md) for the current fleet.
+
 ## Index
 
 | ADR | Decision | Status |

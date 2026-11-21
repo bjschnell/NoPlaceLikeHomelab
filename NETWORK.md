@@ -8,7 +8,7 @@ The physical network as it stands, and the planned move to a segmented UniFi lay
 - **Geography.** The fibre lands at one edge of the house, not centrally. The gateway has to live there; nothing else does.
 - **Coverage.** A single access point at the fibre location has never covered the whole house. That is why a mesh exists at all.
 - **Goal.** Real VLAN segmentation, with cameras and IoT isolated from trusted traffic, and the multi-gig WAN unlocked.
-- **Home Assistant** has to reach devices on the IoT and camera segments *and* be reachable from phones and Odin on the trusted one. That is a firewall-rule problem (narrow allows in each direction), not a reason for a shared flat VLAN.
+- **Home Assistant** has to reach devices on the IoT and camera segments *and* be reachable from phones and Thor on the trusted one. That is a firewall-rule problem (narrow allows in each direction), not a reason for a shared flat VLAN.
 
 ## Current state
 
@@ -17,7 +17,7 @@ flowchart TD
     ISP[ISP gateway] --> EERO1["eero 6 Pro — main node<br/>routing + Wi-Fi"]
     EERO1 --> POE["8-port 1G PoE switch"]
 
-    POE --> THOR[Thor]
+    POE --> ODIN[Odin]
     POE --> CAMS["Avigilon cameras (PoE)"]
     POE --> EERO2["eero 6 Pro — mesh node<br/>Wi-Fi coverage only"]
     POE --> MEDIA["5-port 1G switch<br/>media clients"]
@@ -25,7 +25,7 @@ flowchart TD
     EERO1 -. wireless backhaul .-> EERO3["eero 6 Pro — mesh node<br/>not wired"]
     EERO3 --> SRV["8-port 1G switch — servers"]
     SRV --> MUNINN[Muninn — NAS]
-    SRV --> ODIN[Odin — app host]
+    SRV --> THOR[Thor — app host]
     SRV --> NVR[Avigilon appliance — NVR]
 ```
 
@@ -33,7 +33,7 @@ flowchart TD
 
 - **No VLANs anywhere.** Neither the ISP gateway nor the eeros can segment traffic, so everything, cameras included, shares one flat network.
 - **No per-SSID VLAN mapping.** Even where eero supports tagging, an "IoT" SSID can't be put on its own VLAN.
-- **The servers hang off a wireless hop.** Muninn, Odin and the NVR reach the rest of the network through a wirelessly backhauled mesh node. That is a throughput bottleneck and a fragility point for the machines that matter most.
+- **The servers hang off a wireless hop.** Muninn, Thor and the NVR reach the rest of the network through a wirelessly backhauled mesh node. That is a throughput bottleneck and a fragility point for the machines that matter most.
 - **1 Gbps ceiling end to end**, on a 3 Gbps plan.
 
 ## Planned state — UniFi, gateway and AP separated
@@ -46,8 +46,8 @@ flowchart TD
     GW -- "trunk, all VLANs tagged" --> CORE["Core PoE switch"]
 
     subgraph VLAN10["VLAN 10 — Trusted"]
-        THOR2[Thor]
         ODIN2[Odin]
+        THOR2[Thor]
         MUNINN2[Muninn]
     end
 
@@ -81,7 +81,7 @@ flowchart TD
 - **One dedicated AP (U7 Pro) to start**, centrally placed and fed by a trunk, rather than a combo unit that welds the AP to the gateway's location.
 - **A second, smaller AP only if walk-testing says so.** If the single U7 Pro can't cover both ends of the house once placed, add a U6/U7-Lite class unit for that zone. Measure first rather than overbuy.
 - **Keep the existing PoE switch for cameras** if it supports VLAN tagging; otherwise swap it for a managed PoE unit.
-- **Other switches move to 2.5G opportunistically.** Only Thor has a 2.5G NIC today, so there's no day-one reason to replace them all.
+- **Other switches move to 2.5G opportunistically.** Only Odin has a 2.5G NIC today, so there's no day-one reason to replace them all.
 
 **Rejected approaches:**
 
