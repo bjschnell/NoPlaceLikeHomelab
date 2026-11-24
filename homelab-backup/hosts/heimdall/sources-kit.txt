@@ -1,0 +1,10 @@
+# heimdall rebuild kit: edge + DNS + observability config and certs.
+/var/backups/homelab/kit
+/opt/stacks
+/apps/adguardhome/conf
+/apps/adguardhome/work
+/home/xdx/.ssh
+/home/xdx/.config/systemd/user
+/etc/systemd/system
+/etc/fstab
+/etc/ufw

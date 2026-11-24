@@ -1,0 +1,11 @@
+**/*.log
+**/*.sock
+**/.cache
+**/node_modules
+**/dist
+# raw live DBs: restored from the consistent dumps instead
+/opt/stacks/vaultwarden/vw-data/db.sqlite3*
+/opt/stacks/uptimekuma/data/kuma.db*
+# low-value / regenerable. 2009scape is deliberately NOT in the kit.
+/opt/stacks/2009scape
+/opt/stacks/frugalicious/backups

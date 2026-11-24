@@ -1,3 +1,5 @@
+> **Stale (pre-Nov 2026 fleet, three tiers, archy/odin/heimdall).** See ../README.md for the v2 design; this doc is pending rewrite.
+
 # Restore Runbook
 
 > **Snapshots taken before the `allfather` → `odin` rename carry the old host tag.** The host tag is
