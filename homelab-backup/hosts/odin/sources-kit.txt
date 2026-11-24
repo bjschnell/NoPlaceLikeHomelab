@@ -1,0 +1,11 @@
+# odin (dev desktop): keys and dotfiles only. Code lives in git.
+/var/backups/homelab/kit
+/home/xdx/.ssh
+/home/xdx/.gnupg
+/home/xdx/.config/fish
+/home/xdx/.gitconfig
+/home/xdx/.config/git
+/home/xdx/.config/gh
+/home/xdx/.claude/settings.json
+/home/xdx/.claude/CLAUDE.md
+/home/xdx/.local/bin

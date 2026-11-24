@@ -1,0 +1,2 @@
+/var/backups/homelab/hot/vaultwarden.sqlite3
+/opt/stacks/vaultwarden/vw-data/rsa_key.pem

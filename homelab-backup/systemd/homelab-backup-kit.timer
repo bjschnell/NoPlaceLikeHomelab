@@ -1,0 +1,11 @@
+[Unit]
+Description=Homelab backup (rebuild kit, nightly) timer
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+RandomizedDelaySec=10min
+Unit=homelab-backup-kit.service
+
+[Install]
+WantedBy=timers.target

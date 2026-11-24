@@ -1,0 +1,8 @@
+# thor rebuild kit: everything to bring a replacement apps server up.
+/var/backups/homelab/kit
+/opt/stacks
+/home/xdx/.ssh
+/home/xdx/.config/systemd/user
+/etc/systemd/system
+/etc/fstab
+/etc/modprobe.d

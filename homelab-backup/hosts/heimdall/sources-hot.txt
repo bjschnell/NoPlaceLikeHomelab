@@ -1,3 +1,1 @@
-# Hot tier sources for heimdall (every 6h).
-# Authelia online dump only.
 /var/backups/homelab/hot/authelia.sqlite3

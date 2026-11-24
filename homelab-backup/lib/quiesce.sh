@@ -120,3 +120,16 @@ register_dump_cleanup() {
   eval "${fn_name}() { [[ -e \"$target\" ]] && rm -rf \"$target\"; }"
   register_cleanup "$fn_name"
 }
+
+# --- Postgres dump (in container) -----------------------------------------
+# Uses the container's own POSTGRES_USER, so no credentials live in this repo.
+# Args: <container> <out.sql.gz>
+pg_dumpall_in_container() {
+  local container="$1" out="$2"
+  mkdir -p "$(dirname "$out")"
+  log "INFO: pg_dumpall ($container) -> $out"
+  docker exec "$container" sh -c 'pg_dumpall -U "${POSTGRES_USER:-postgres}"' | gzip -1 > "$out" \
+    || die "pg_dumpall failed in $container"
+  [[ -s "$out" ]] || die "empty pg dump from $container"
+  chmod 600 "$out"
+}

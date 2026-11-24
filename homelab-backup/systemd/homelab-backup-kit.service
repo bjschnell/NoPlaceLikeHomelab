@@ -1,0 +1,16 @@
+[Unit]
+Description=Homelab backup (rebuild kit, nightly)
+Wants=network-online.target
+After=network-online.target docker.service
+# Hosts without this tier (e.g. odin has no hot tier) skip silently
+ConditionPathExists=/opt/homelab-backup/hosts/%H/sources-kit.txt
+
+[Service]
+Type=oneshot
+ExecStart=/opt/homelab-backup/bin/backup.sh kit
+TimeoutStartSec=2h
+User=root
+Nice=19
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true

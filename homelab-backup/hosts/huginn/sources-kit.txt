@@ -1,0 +1,30 @@
+# huginn rebuild kit: Hermes/Alice config + Honcho + calendar. Explicit
+# allowlist: ~/.hermes is 12 GB, mostly caches, venvs and git-recoverable code.
+/var/backups/homelab/kit
+/opt/stacks/honcho/docker-compose.yml
+/opt/stacks/honcho/config.toml
+/opt/stacks/calendar-sync
+/opt/stacks/icloud-reminders
+/opt/stacks/llamacpp
+/opt/stacks/exporters
+/home/xdx/.hermes/config.yaml
+/home/xdx/.hermes/auth.json
+/home/xdx/.hermes/.env
+/home/xdx/.hermes/google_client_secret.json
+/home/xdx/.hermes/google_token.json
+/home/xdx/.hermes/channel_aliases.json
+/home/xdx/.hermes/channel_directory.json
+/home/xdx/.hermes/cron
+/home/xdx/.hermes/cron_data
+/home/xdx/.hermes/skills
+/home/xdx/.hermes/scripts
+/home/xdx/.hermes/plugins
+/home/xdx/.hermes/plugin-data
+/home/xdx/.hermes/platforms
+/home/xdx/.hermes/memories
+/home/xdx/.hermes/alice_pwa
+/home/xdx/.hermes/alice-pwa-notes
+/home/xdx/.hermes/keys
+/home/xdx/.ssh
+/home/xdx/.config/systemd/user
+/etc/systemd/system
